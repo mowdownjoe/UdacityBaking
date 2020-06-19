@@ -9,6 +9,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.appcompat.widget.Toolbar;
 
+import com.example.u_bake.databinding.ActivityStepListBinding;
+import com.example.u_bake.databinding.StepListBinding;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -20,6 +22,8 @@ import android.widget.TextView;
 import com.example.u_bake.R;
 
 import com.example.u_bake.ui.dummy.DummyContent;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -38,18 +42,18 @@ public class StepListActivity extends AppCompatActivity {
      * device.
      */
     private boolean mTwoPane;
+    ActivityStepListBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_step_list);
+        binding = ActivityStepListBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        toolbar.setTitle(getTitle());
+        setSupportActionBar(binding.toolbar);
+        binding.toolbar.setTitle(getTitle());
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+        binding.fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
@@ -57,7 +61,7 @@ public class StepListActivity extends AppCompatActivity {
             }
         });
 
-        if (findViewById(R.id.step_detail_container) != null) {
+        if (binding.localStepList.stepDetailContainer != null) {
             // The detail container view will be present only in the
             // large-screen layouts (res/values-w900dp).
             // If this view is present, then the
@@ -65,9 +69,7 @@ public class StepListActivity extends AppCompatActivity {
             mTwoPane = true;
         }
 
-        View recyclerView = findViewById(R.id.step_list);
-        assert recyclerView != null;
-        setupRecyclerView((RecyclerView) recyclerView);
+        setupRecyclerView(binding.localStepList.stepList);
     }
 
     private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
@@ -110,6 +112,7 @@ public class StepListActivity extends AppCompatActivity {
             mTwoPane = twoPane;
         }
 
+        @NotNull
         @Override
         public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             View view = LayoutInflater.from(parent.getContext())
@@ -131,7 +134,7 @@ public class StepListActivity extends AppCompatActivity {
             return mValues.size();
         }
 
-        class ViewHolder extends RecyclerView.ViewHolder {
+        static class ViewHolder extends RecyclerView.ViewHolder {
             final TextView mIdView;
             final TextView mContentView;
 

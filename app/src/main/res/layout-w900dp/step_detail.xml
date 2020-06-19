@@ -39,7 +39,7 @@
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="16dp"
         android:textIsSelectable="true"
-        app:layout_constraintBottom_toTopOf="@+id/nav_button_bar"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/fl_media_holder"
@@ -52,16 +52,6 @@
         android:orientation="horizontal"
         app:layout_constraintGuide_percent=".5" />
 
-    <include
-        android:id="@+id/nav_button_bar"
-        layout="@layout/step_nav_buttons"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

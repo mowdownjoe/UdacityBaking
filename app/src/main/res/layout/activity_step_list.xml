@@ -27,7 +27,8 @@
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <include layout="@layout/step_list" />
+        <include android:id="@+id/local_step_list"
+            layout="@layout/step_list" />
     </FrameLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton

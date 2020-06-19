@@ -34,6 +34,9 @@ dependencies {
     final def androidXTestVersion = '1.2.0'
     final def lifecycle_version = '2.2.0'
     final def truth_version = '1.0.1'
+    final def okhttp_version = '4.7.2'
+    final def media2_version = '1.0.3'
+    final def exoplayer_version = '2.11.5'
 
     implementation fileTree(dir: "libs", include: ["*.jar"])
 
@@ -44,8 +47,16 @@ dependencies {
     implementation 'com.google.android.material:material:1.1.0'
 
     implementation 'com.squareup.moshi:moshi:1.9.2'
-    implementation 'com.squareup.okhttp3:okhttp:4.7.2'
+    implementation "com.squareup.okhttp3:okhttp:$okhttp_version"
     implementation 'com.squareup.picasso:picasso:2.71828'
+
+    implementation "androidx.media2:media2-session:$media2_version"
+    implementation "androidx.media2:media2-player:$media2_version"
+    implementation "androidx.media2:media2-exoplayer:$media2_version"
+    implementation "com.google.android.exoplayer:exoplayer-core:$exoplayer_version"
+    implementation "com.google.android.exoplayer:exoplayer-dash:$exoplayer_version"
+    implementation "com.google.android.exoplayer:exoplayer-ui:$exoplayer_version"
+    implementation "com.google.android.exoplayer:exoplayer-smoothstreaming:$exoplayer_version"
 
     implementation "androidx.lifecycle:lifecycle-livedata:$lifecycle_version"
     implementation "androidx.lifecycle:lifecycle-viewmodel:$lifecycle_version"
@@ -62,5 +73,6 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
     testImplementation "androidx.test:core:$androidXTestVersion"
     testImplementation "androidx.test.ext:truth:$androidXTestVersion"
+    testImplementation "com.squareup.okhttp3:mockwebserver:$okhttp_version"
 
 }
