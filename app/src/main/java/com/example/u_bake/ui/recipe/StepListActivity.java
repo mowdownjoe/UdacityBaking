@@ -1,4 +1,4 @@
-package com.example.u_bake.ui;
+package com.example.u_bake.ui.recipe;
 
 import android.content.Context;
 import android.content.Intent;
@@ -7,11 +7,8 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.appcompat.widget.Toolbar;
 
 import com.example.u_bake.databinding.ActivityStepListBinding;
-import com.example.u_bake.databinding.StepListBinding;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
 import android.view.LayoutInflater;

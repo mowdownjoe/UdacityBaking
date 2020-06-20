@@ -5,12 +5,12 @@ import java.util.List;
 public class Recipe {
     private int id;
     private String name;
-    private List<Ingredient> ingredients;
-    private List<Instruction> steps;
+    private List<AutoValue_Ingredient> ingredients;
+    private List<AutoValue_Instruction> steps;
     private int servings;
     //TODO Parse empty image tag in each Recipe?
 
-    public Recipe(int id, String name, List<Ingredient> ingredients, List<Instruction> steps, int servings) {
+    public Recipe(int id, String name, List<AutoValue_Ingredient> ingredients, List<AutoValue_Instruction> steps, int servings) {
         this.id = id;
         this.name = name;
         this.ingredients = ingredients;
@@ -34,19 +34,19 @@ public class Recipe {
         this.name = name;
     }
 
-    public List<Ingredient> getIngredients() {
+    public List<AutoValue_Ingredient> getIngredients() {
         return ingredients;
     }
 
-    public void setIngredients(List<Ingredient> ingredients) {
+    public void setIngredients(List<AutoValue_Ingredient> ingredients) {
         this.ingredients = ingredients;
     }
 
-    public List<Instruction> getSteps() {
+    public List<AutoValue_Instruction> getSteps() {
         return steps;
     }
 
-    public void setSteps(List<Instruction> steps) {
+    public void setSteps(List<AutoValue_Instruction> steps) {
         this.steps = steps;
     }
 

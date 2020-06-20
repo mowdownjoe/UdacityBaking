@@ -1,13 +1,10 @@
-package com.example.u_bake.ui;
+package com.example.u_bake.ui.recipe;
 
 import android.content.Intent;
 import android.os.Bundle;
 
 import com.example.u_bake.databinding.ActivityStepDetailBinding;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
-
-import androidx.appcompat.widget.Toolbar;
 
 import android.view.View;
 

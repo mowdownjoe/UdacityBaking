@@ -37,6 +37,7 @@ dependencies {
     final def okhttp_version = '4.7.2'
     final def media2_version = '1.0.3'
     final def exoplayer_version = '2.11.5'
+    final def autovalue_version = '1.7.3'
 
     implementation fileTree(dir: "libs", include: ["*.jar"])
 
@@ -45,6 +46,10 @@ dependencies {
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
     implementation 'com.google.android.material:material:1.1.0'
+
+    annotationProcessor "com.google.auto.value:auto-value:$autovalue_version"
+    implementation "com.google.auto.value:auto-value-annotations:$autovalue_version"
+    annotationProcessor 'com.ryanharter.auto.value:auto-value-parcel:0.2.7'
 
     implementation 'com.squareup.moshi:moshi:1.9.2'
     implementation "com.squareup.okhttp3:okhttp:$okhttp_version"

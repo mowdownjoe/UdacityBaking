@@ -1,4 +1,4 @@
-package com.example.u_bake.ui;
+package com.example.u_bake.ui.recipe;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -11,7 +11,6 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import com.example.u_bake.R;
 import com.example.u_bake.ui.dummy.DummyContent;
@@ -69,7 +68,7 @@ public class StepDetailFragment extends Fragment {
 
         // Show the dummy content as text in a TextView.
         if (mItem != null) {
-            binding.stepDetail.setText(mItem.details);
+            binding.tvStepDetail.setText(mItem.details);
         }
 
         return binding.getRoot();

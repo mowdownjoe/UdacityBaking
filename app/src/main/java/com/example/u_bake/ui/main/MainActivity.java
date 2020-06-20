@@ -1,4 +1,4 @@
-package com.example.u_bake.ui;
+package com.example.u_bake.ui.main;
 
 import androidx.appcompat.app.AppCompatActivity;
 
