@@ -1,8 +1,11 @@
 package com.example.u_bake.utils;
 
+import androidx.annotation.Nullable;
+
 import com.example.u_bake.OkHttpException;
 
 import java.io.IOException;
+import java.util.Objects;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -12,6 +15,7 @@ public class NetworkUtils {
 
     private static final String JSON_URL = "http://go.udacity.com/android-baking-app-json";
 
+    @Nullable
     public static String getRawRecipeJSON() throws IOException {
         OkHttpClient client = new OkHttpClient();
 
@@ -25,7 +29,7 @@ public class NetworkUtils {
         int code = response.code();
 
         if (code == 200){
-            return response.body().string();
+            return Objects.requireNonNull(response.body()).string();
         } else if (code >= 400){
             throw new OkHttpException(response);
         } else {
