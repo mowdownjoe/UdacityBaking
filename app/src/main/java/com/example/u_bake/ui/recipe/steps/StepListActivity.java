@@ -1,4 +1,4 @@
-package com.example.u_bake.ui.recipe;
+package com.example.u_bake.ui.recipe.steps;
 
 import android.content.Context;
 import android.content.Intent;
@@ -9,7 +9,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.u_bake.databinding.ActivityStepListBinding;
-import com.google.android.material.snackbar.Snackbar;
+import com.example.u_bake.ui.recipe.detail.StepDetailActivity;
+import com.example.u_bake.ui.recipe.detail.StepDetailFragment;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -49,14 +50,6 @@ public class StepListActivity extends AppCompatActivity {
 
         setSupportActionBar(binding.toolbar);
         binding.toolbar.setTitle(getTitle());
-
-        binding.fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
 
         if (binding.localStepList.stepDetailContainer != null) {
             // The detail container view will be present only in the

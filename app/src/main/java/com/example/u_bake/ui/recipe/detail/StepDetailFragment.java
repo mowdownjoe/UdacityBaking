@@ -1,9 +1,11 @@
-package com.example.u_bake.ui.recipe;
+package com.example.u_bake.ui.recipe.detail;
 
 import android.app.Activity;
 import android.os.Bundle;
 
 import com.example.u_bake.databinding.StepDetailBinding;
+import com.example.u_bake.ui.recipe.detail.StepDetailActivity;
+import com.example.u_bake.ui.recipe.steps.StepListActivity;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
 
 import androidx.fragment.app.Fragment;

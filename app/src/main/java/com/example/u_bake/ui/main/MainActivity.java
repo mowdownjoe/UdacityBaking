@@ -1,8 +1,8 @@
 package com.example.u_bake.ui.main;
 
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.content.Intent;
@@ -11,12 +11,9 @@ import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.View;
 
-import com.example.u_bake.R;
 import com.example.u_bake.data.Recipe;
 import com.example.u_bake.databinding.ActivityMainBinding;
-import com.example.u_bake.ui.recipe.StepListActivity;
-
-import java.util.Objects;
+import com.example.u_bake.ui.recipe.steps.StepListActivity;
 
 public class MainActivity extends AppCompatActivity implements RecipeAdapter.RecipeOnClickListener {
 
@@ -35,7 +32,8 @@ public class MainActivity extends AppCompatActivity implements RecipeAdapter.Rec
         binding.rvRecipeList.setHasFixedSize(true);
 
         if (getScreenWidth() >= 900){
-            //TOOD Create GridLayoutManager
+            GridLayoutManager layoutManager = new GridLayoutManager(this, 3);
+            binding.rvRecipeList.setLayoutManager(layoutManager);
         } else {
             LinearLayoutManager layoutManager = new LinearLayoutManager(this);
             binding.rvRecipeList.setLayoutManager(layoutManager);

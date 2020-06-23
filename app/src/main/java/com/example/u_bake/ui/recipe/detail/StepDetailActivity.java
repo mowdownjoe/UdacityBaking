@@ -1,9 +1,10 @@
-package com.example.u_bake.ui.recipe;
+package com.example.u_bake.ui.recipe.detail;
 
 import android.content.Intent;
 import android.os.Bundle;
 
 import com.example.u_bake.databinding.ActivityStepDetailBinding;
+import com.example.u_bake.ui.recipe.steps.StepListActivity;
 import com.google.android.material.snackbar.Snackbar;
 
 import android.view.View;

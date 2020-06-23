@@ -18,8 +18,11 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class MainViewModel extends AndroidViewModel {
 
@@ -40,7 +43,32 @@ public class MainViewModel extends AndroidViewModel {
         recipeList = new MutableLiveData<>();
     }
 
+    public void initializeRecipes(){
+        fetchRecipesTask = new FetchRecipesTask();
+        fetchRecipesTask.execute(!isCacheFresh());
+    }
 
+    //Checks if Cache is older than a day.
+    private boolean isCacheFresh(){
+        File cache = new File(getApplication().getCacheDir(), jsonCache);
+        if (cache.exists()){
+            Date lastModified = new Date(cache.lastModified());
+            Date now = new Date();
+            long elapsedMillis = Math.abs(now.getTime() - lastModified.getTime());
+            long elapsedDays = TimeUnit.DAYS.convert(elapsedMillis, TimeUnit.MILLISECONDS);
+            return elapsedDays < 1;
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    protected void onCleared() {
+        if (fetchRecipesTask != null){
+            fetchRecipesTask.cancel(true);
+        }
+        super.onCleared();
+    }
 
     @SuppressWarnings("deprecation")
     @SuppressLint("StaticFieldLeak")
@@ -54,6 +82,7 @@ public class MainViewModel extends AndroidViewModel {
             status.postValue(LoadingStatus.LOADING);
         }
 
+        @SuppressWarnings("ResultOfMethodCallIgnored")
         @Override
         protected Recipe[] doInBackground(Boolean... args) {
             boolean shouldCache = args[0];
@@ -63,7 +92,10 @@ public class MainViewModel extends AndroidViewModel {
 
                 if (shouldCache && rawJSON != null && !rawJSON.isEmpty()) {
                     //Cache the retrieved JSON.
-                    File cache = File.createTempFile(jsonCache, null, getApplication().getCacheDir());
+                    File cache = new File(getApplication().getCacheDir(), jsonCache);
+                    if (!cache.exists()){
+                        cache.createNewFile();
+                    }
                     FileWriter writer = new FileWriter(cache);
                     writer.write(rawJSON);
                     writer.close();
@@ -71,7 +103,7 @@ public class MainViewModel extends AndroidViewModel {
 
                 return JsonUtils.parseRecipeListJSON(rawJSON);
             } catch (IOException e) {
-                Log.e(TAG, "Error when ", e);
+                Log.e(TAG, "Error when retrieving and caching recipes.", e);
                 return null;
             }
         }

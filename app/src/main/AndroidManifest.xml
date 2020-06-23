@@ -14,17 +14,17 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".ui.recipe.StepListActivity"
+            android:name=".ui.recipe.steps.StepListActivity"
             android:label="@string/title_step_list"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".ui.recipe.StepDetailActivity"
+            android:name=".ui.recipe.detail.StepDetailActivity"
             android:label="@string/title_step_detail"
-            android:parentActivityName=".ui.recipe.StepListActivity"
+            android:parentActivityName=".ui.recipe.steps.StepListActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.example.u_bake.ui.recipe.StepListActivity" />
+                android:value="com.example.u_bake.ui.recipe.steps.StepListActivity" />
         </activity>
         <activity android:name=".ui.main.MainActivity">
             <intent-filter>
