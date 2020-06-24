@@ -3,26 +3,27 @@ package com.example.u_bake.ui.recipe.steps;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.u_bake.R;
+import com.example.u_bake.data.Ingredient;
+import com.example.u_bake.data.Instruction;
+import com.example.u_bake.data.Recipe;
 import com.example.u_bake.databinding.ActivityStepListBinding;
+import com.example.u_bake.databinding.StepListContentBinding;
+import com.example.u_bake.ui.dummy.DummyContent;
 import com.example.u_bake.ui.recipe.detail.StepDetailActivity;
 import com.example.u_bake.ui.recipe.detail.StepDetailFragment;
 
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
-
-import com.example.u_bake.R;
-
-import com.example.u_bake.ui.dummy.DummyContent;
-
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -63,14 +64,30 @@ public class StepListActivity extends AppCompatActivity {
     }
 
     private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
-        recyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(this, DummyContent.ITEMS, mTwoPane));
+        recyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(this,
+                Arrays.asList(getRecipeFromIntent().getSteps()), mTwoPane));
+    }
+
+    private Recipe getRecipeFromIntent(){
+        Intent intent = getIntent();
+        int id = intent.getIntExtra(Recipe.RECIPE_ID, -1);
+        if (id == -1) {
+            return null;
+        }
+        String name = intent.getStringExtra(Recipe.RECIPE_NAME);
+        Ingredient[] ingredients = (Ingredient[]) intent
+                .getParcelableArrayExtra(Recipe.RECIPE_INGREDIENTS);
+        Instruction[] instructions = (Instruction[]) intent.getParcelableArrayExtra(Recipe.RECIPE_STEPS);
+        int servings = intent.getIntExtra(Recipe.RECIPE_SERVINGS, 0);
+        String image = intent.getStringExtra(Recipe.RECIPE_IMAGE_URL);
+        return new Recipe(id, name, ingredients, instructions, servings, image);
     }
 
     public static class SimpleItemRecyclerViewAdapter
             extends RecyclerView.Adapter<SimpleItemRecyclerViewAdapter.ViewHolder> {
 
         private final StepListActivity mParentActivity;
-        private final List<DummyContent.DummyItem> mValues;
+        private final List<Instruction> mInstructions;
         private final boolean mTwoPane;
         private final View.OnClickListener mOnClickListener = new View.OnClickListener() {
             @Override
@@ -95,9 +112,9 @@ public class StepListActivity extends AppCompatActivity {
         };
 
         SimpleItemRecyclerViewAdapter(StepListActivity parent,
-                                      List<DummyContent.DummyItem> items,
+                                      List<Instruction> items,
                                       boolean twoPane) {
-            mValues = items;
+            mInstructions = items;
             mParentActivity = parent;
             mTwoPane = twoPane;
         }
@@ -112,26 +129,24 @@ public class StepListActivity extends AppCompatActivity {
 
         @Override
         public void onBindViewHolder(final ViewHolder holder, int position) {
-            holder.mIdView.setText(mValues.get(position).id);
-            holder.mContentView.setText(mValues.get(position).content);
+            holder.binding.idText.setText(mInstructions.get(position).id());
+            holder.binding.content.setText(mInstructions.get(position).shortDescription());
 
-            holder.itemView.setTag(mValues.get(position));
+            holder.itemView.setTag(mInstructions.get(position));
             holder.itemView.setOnClickListener(mOnClickListener);
         }
 
         @Override
         public int getItemCount() {
-            return mValues.size();
+            return mInstructions.size();
         }
 
         static class ViewHolder extends RecyclerView.ViewHolder {
-            final TextView mIdView;
-            final TextView mContentView;
+            final StepListContentBinding binding;
 
             ViewHolder(View view) {
                 super(view);
-                mIdView = (TextView) view.findViewById(R.id.id_text);
-                mContentView = (TextView) view.findViewById(R.id.content);
+                binding = StepListContentBinding.bind(view);
             }
         }
     }

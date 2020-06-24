@@ -70,13 +70,9 @@ public class MainActivity extends AppCompatActivity implements RecipeAdapter.Rec
     }
 
     private int getScreenWidth(){
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            return getWindow().getDecorView().getWidth();
-        } else {
-            DisplayMetrics metrics = new DisplayMetrics();
-            getWindowManager().getDefaultDisplay().getMetrics(metrics);
-            return metrics.widthPixels; //Convert to DIPs
-        }
+        DisplayMetrics metrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(metrics);
+        return metrics.widthPixels; //Convert to DIPs
     }
 
     @Override

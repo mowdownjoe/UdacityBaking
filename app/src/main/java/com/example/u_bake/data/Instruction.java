@@ -6,14 +6,15 @@ import android.os.Parcelable;
 import androidx.annotation.Nullable;
 
 import com.google.auto.value.AutoValue;
+import com.squareup.moshi.JsonClass;
 
 @AutoValue
 public abstract class Instruction implements Parcelable {
-    abstract int id();
-    abstract String shortDescription();
-    abstract String description();
-    abstract String videoURL();
-    abstract String thumbnailURL();
+    public abstract int id();
+    public abstract String shortDescription();
+    public abstract String description();
+    public abstract String videoURL();
+    public abstract String thumbnailURL();
 
     @Nullable
     public Uri getThumbnailUri() {

@@ -10,13 +10,13 @@ public class Recipe {
 
     private int id;
     private String name;
-    private AutoValue_Ingredient[] ingredients;
-    private AutoValue_Instruction[] steps;
+    private Ingredient[] ingredients;
+    private Instruction[] steps;
     private int servings;
     private String image;
 
-    public Recipe(int id, String name, AutoValue_Ingredient[] ingredients,
-                  AutoValue_Instruction[] steps, int servings, String image) {
+    public Recipe(int id, String name, Ingredient[] ingredients,
+                  Instruction[] steps, int servings, String image) {
         this.id = id;
         this.name = name;
         this.ingredients = ingredients;
@@ -41,19 +41,19 @@ public class Recipe {
         this.name = name;
     }
 
-    public AutoValue_Ingredient[] getIngredients() {
+    public Ingredient[] getIngredients() {
         return ingredients;
     }
 
-    public void setIngredients(AutoValue_Ingredient[] ingredients) {
+    public void setIngredients(Ingredient[] ingredients) {
         this.ingredients = ingredients;
     }
 
-    public AutoValue_Instruction[] getSteps() {
+    public Instruction[] getSteps() {
         return steps;
     }
 
-    public void setSteps(AutoValue_Instruction[] steps) {
+    public void setSteps(Instruction[] steps) {
         this.steps = steps;
     }
 

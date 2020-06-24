@@ -1,7 +1,7 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 30
+    compileSdkVersion 29
     buildToolsVersion "30.0.0"
 
     defaultConfig {
@@ -50,6 +50,8 @@ dependencies {
     annotationProcessor "com.google.auto.value:auto-value:$autovalue_version"
     implementation "com.google.auto.value:auto-value-annotations:$autovalue_version"
     annotationProcessor 'com.ryanharter.auto.value:auto-value-parcel:0.2.7'
+    annotationProcessor("com.ryanharter.auto.value:auto-value-moshi-extension:1.0.0")
+    implementation("com.ryanharter.auto.value:auto-value-moshi-annotations:1.0.0")
 
     implementation 'com.squareup.moshi:moshi:1.9.2'
     implementation "com.squareup.okhttp3:okhttp:$okhttp_version"
