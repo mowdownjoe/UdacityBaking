@@ -1,27 +1,21 @@
 package com.example.u_bake.ui.recipe.detail;
 
-import android.app.Activity;
 import android.os.Bundle;
-
-import com.example.u_bake.data.Instruction;
-import com.example.u_bake.databinding.StepDetailBinding;
-import com.example.u_bake.ui.recipe.detail.StepDetailActivity;
-import com.example.u_bake.ui.recipe.steps.StepListActivity;
-import com.google.android.material.appbar.CollapsingToolbarLayout;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelStore;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.u_bake.R;
-import com.example.u_bake.ui.dummy.DummyContent;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+
+import com.example.u_bake.data.Instruction;
+import com.example.u_bake.databinding.StepDetailBinding;
+import com.example.u_bake.ui.recipe.steps.StepListActivity;
+import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.squareup.picasso.Picasso;
 
 import java.util.Arrays;
 
@@ -35,6 +29,7 @@ public class StepDetailFragment extends Fragment {
 
     StepDetailBinding binding;
     StepDetailViewModel viewModel;
+    SimpleExoPlayer player;
 
     /**
      * The fragment argument representing the item ID that this fragment
@@ -64,6 +59,10 @@ public class StepDetailFragment extends Fragment {
                             arguments.getInt(ARG_ITEM_ID),
                             Arrays.asList((Instruction[]) arguments.getParcelableArray(ARG_STEP_LIST))
                     )).get(StepDetailViewModel.class);
+            viewModel.getInstructionIndex().observe(getViewLifecycleOwner(), integer -> populateUi());
+        } else {
+            //If Fragment is loaded without arguments, close out activity
+            requireActivity().finish();
         }
     }
 
@@ -72,7 +71,6 @@ public class StepDetailFragment extends Fragment {
                              Bundle savedInstanceState) {
         binding = StepDetailBinding.inflate(inflater, container, false);
 
-        // Show the dummy content as text in a TextView.
 
         if (binding.navButtonBar != null){
             binding.navButtonBar.btnNextStep.setOnClickListener(v -> {
@@ -85,14 +83,44 @@ public class StepDetailFragment extends Fragment {
             });
         }
 
+        //TODO Initialize ExoPlayer
+        player = new SimpleExoPlayer.Builder(requireContext()).build();
+        binding.pvVideo.setPlayer(player);
+
         return binding.getRoot();
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        evaluateShouldButtonsBeEnabled();
-        //TODO Populate layout
+        if (binding.navButtonBar != null) {
+            evaluateShouldButtonsBeEnabled();
+        }
+        populateUi();
+    }
+
+    private void populateUi(){
+        Integer index = viewModel.getInstructionIndex().getValue();
+        Instruction instruction = viewModel.getInstructions().get(index);
+        binding.tvStepDetail.setText(instruction.description());
+        if (instruction.thumbnailURL().isEmpty() && instruction.videoURL().isEmpty()){
+            binding.flMediaHolder.setVisibility(View.GONE);
+            return;
+        }
+        if (!instruction.thumbnailURL().isEmpty()){
+            binding.flMediaHolder.setVisibility(View.VISIBLE);
+            binding.pvVideo.setVisibility(View.INVISIBLE);
+            binding.ivThumbnail.setVisibility(View.VISIBLE);
+            //TODO Add placeholder and error arguments to Picasso chain
+            Picasso.get()
+                    .load(instruction.getThumbnailUri())
+                    .into(binding.ivThumbnail);
+        } else if (!instruction.videoURL().isEmpty()){
+            binding.flMediaHolder.setVisibility(View.VISIBLE);
+            binding.pvVideo.setVisibility(View.VISIBLE);
+            binding.ivThumbnail.setVisibility(View.INVISIBLE);
+            //TODO Load video
+        }
     }
 
     private void evaluateShouldButtonsBeEnabled() {

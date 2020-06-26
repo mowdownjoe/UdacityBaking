@@ -67,6 +67,8 @@ public class MainActivity extends AppCompatActivity implements RecipeAdapter.Rec
                adapter.setRecipeData(recipes);
             }
         });
+
+        viewModel.initializeRecipes();
     }
 
     private int getScreenWidth(){

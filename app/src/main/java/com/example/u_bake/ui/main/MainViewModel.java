@@ -70,7 +70,6 @@ public class MainViewModel extends AndroidViewModel {
         super.onCleared();
     }
 
-    @SuppressWarnings("deprecation")
     @SuppressLint("StaticFieldLeak")
     private class FetchRecipesTask extends AsyncTask<Boolean, Void, Recipe[]> {
 

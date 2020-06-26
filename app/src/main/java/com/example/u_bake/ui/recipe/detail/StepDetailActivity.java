@@ -33,13 +33,7 @@ public class StepDetailActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
         setSupportActionBar(binding.detailToolbar);
 
-        binding.fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own detail action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+
 
         // Show the Up button in the action bar.
         ActionBar actionBar = getSupportActionBar();

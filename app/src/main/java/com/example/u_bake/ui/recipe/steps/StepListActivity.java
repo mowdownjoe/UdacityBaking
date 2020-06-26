@@ -55,12 +55,14 @@ public class StepListActivity extends AppCompatActivity {
     }
 
     private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
+        Recipe recipe = getRecipeFromIntent();
+        if (recipe == null){
+            return;
+        }
+
         recyclerView.setHasFixedSize(true);
-
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-
-        recyclerView.setAdapter(new StepListAdapter(this,
-                Arrays.asList(getRecipeFromIntent().getSteps()), mTwoPane));
+        recyclerView.setAdapter(new StepListAdapter(this, recipe, mTwoPane));
     }
 
     private Recipe getRecipeFromIntent(){

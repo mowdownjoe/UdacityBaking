@@ -5,4 +5,6 @@
     <string name="btn_prev_step">Previous Step</string>
     <string name="btn_next_step">Next Step</string>
     <string name="network_error_text">We couldn\'t fetch any data. Please try again later.</string>
+    <string name="appwidget_text">EXAMPLE</string>
+    <string name="add_widget">Add widget</string>
 </resources>
