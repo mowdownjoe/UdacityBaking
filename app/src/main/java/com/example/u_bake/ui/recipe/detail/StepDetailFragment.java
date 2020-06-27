@@ -11,13 +11,25 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.example.u_bake.AppExecutors;
 import com.example.u_bake.data.Instruction;
 import com.example.u_bake.databinding.StepDetailBinding;
 import com.example.u_bake.ui.recipe.steps.StepListActivity;
 import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.ext.okhttp.OkHttpDataSourceFactory;
+import com.google.android.exoplayer2.source.MediaSource;
+import com.google.android.exoplayer2.source.ProgressiveMediaSource;
+import com.google.android.exoplayer2.util.Util;
 import com.squareup.picasso.Picasso;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Arrays;
+import java.util.Objects;
+import java.util.concurrent.ExecutorService;
+
+import okhttp3.Dispatcher;
+import okhttp3.OkHttpClient;
 
 /**
  * A fragment representing a single Step detail screen.
@@ -30,6 +42,11 @@ public class StepDetailFragment extends Fragment {
     StepDetailBinding binding;
     StepDetailViewModel viewModel;
     SimpleExoPlayer player;
+    OkHttpClient client;
+
+    private enum MediaVisibility{
+        NO_MEDIA, VIDEO, THUMBNAIL
+    }
 
     /**
      * The fragment argument representing the item ID that this fragment
@@ -54,10 +71,13 @@ public class StepDetailFragment extends Fragment {
                 arguments.containsKey(ARG_ITEM_ID)
                 && arguments.containsKey(ARG_STEP_LIST)) {
 
+            setUpOkHttpClient();
+
             viewModel = new ViewModelProvider(getViewModelStore(),
                     new StepDetailViewModel.StepDetailViewModelFactory(
                             arguments.getInt(ARG_ITEM_ID),
-                            Arrays.asList((Instruction[]) arguments.getParcelableArray(ARG_STEP_LIST))
+                            Arrays.asList((Instruction[]) Objects
+                                    .requireNonNull(arguments.getParcelableArray(ARG_STEP_LIST)))
                     )).get(StepDetailViewModel.class);
             viewModel.getInstructionIndex().observe(getViewLifecycleOwner(), integer -> populateUi());
         } else {
@@ -66,26 +86,30 @@ public class StepDetailFragment extends Fragment {
         }
     }
 
+    private void setUpOkHttpClient() {
+        //TODO Configure client through builder.
+        Dispatcher dispatcher = new Dispatcher((ExecutorService) AppExecutors.getInstance().networkIO());
+
+        client = new OkHttpClient.Builder()
+                .dispatcher(dispatcher)
+                .build();
+    }
+
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NotNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = StepDetailBinding.inflate(inflater, container, false);
-
 
         if (binding.navButtonBar != null){
             binding.navButtonBar.btnNextStep.setOnClickListener(v -> {
                 viewModel.incrementIndex();
-                evaluateShouldButtonsBeEnabled();
+                evaluateShouldNavButtonsBeEnabled();
             });
             binding.navButtonBar.btnPrevStep.setOnClickListener(v -> {
                 viewModel.decrementIndex();
-                evaluateShouldButtonsBeEnabled();
+                evaluateShouldNavButtonsBeEnabled();
             });
         }
-
-        //TODO Initialize ExoPlayer
-        player = new SimpleExoPlayer.Builder(requireContext()).build();
-        binding.pvVideo.setPlayer(player);
 
         return binding.getRoot();
     }
@@ -94,36 +118,93 @@ public class StepDetailFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         if (binding.navButtonBar != null) {
-            evaluateShouldButtonsBeEnabled();
+            evaluateShouldNavButtonsBeEnabled();
         }
         populateUi();
     }
 
     private void populateUi(){
-        Integer index = viewModel.getInstructionIndex().getValue();
-        Instruction instruction = viewModel.getInstructions().get(index);
+        Instruction instruction = viewModel.getCurrentStep();
         binding.tvStepDetail.setText(instruction.description());
-        if (instruction.thumbnailURL().isEmpty() && instruction.videoURL().isEmpty()){
-            binding.flMediaHolder.setVisibility(View.GONE);
-            return;
-        }
-        if (!instruction.thumbnailURL().isEmpty()){
-            binding.flMediaHolder.setVisibility(View.VISIBLE);
-            binding.pvVideo.setVisibility(View.INVISIBLE);
-            binding.ivThumbnail.setVisibility(View.VISIBLE);
+
+        MediaVisibility visibility = evaluateWhatMediaToShow();
+        if (visibility == MediaVisibility.THUMBNAIL){
             //TODO Add placeholder and error arguments to Picasso chain
+            releasePlayer();
             Picasso.get()
                     .load(instruction.getThumbnailUri())
                     .into(binding.ivThumbnail);
-        } else if (!instruction.videoURL().isEmpty()){
-            binding.flMediaHolder.setVisibility(View.VISIBLE);
-            binding.pvVideo.setVisibility(View.VISIBLE);
-            binding.ivThumbnail.setVisibility(View.INVISIBLE);
-            //TODO Load video
+        } else if (visibility == MediaVisibility.VIDEO){
+            if (!initPlayer()){
+                prepareMediaForPlayer();
+            }
+        }
+
+        if (binding.navButtonBar != null){//If not using TwoPane UI
+            requireActivity().getActionBar().setTitle(instruction.shortDescription());
         }
     }
 
-    private void evaluateShouldButtonsBeEnabled() {
+    private MediaVisibility evaluateWhatMediaToShow() {
+        if (!viewModel.shouldUseImage() && !viewModel.shouldUseVideo()){
+            binding.flMediaHolder.setVisibility(View.GONE);
+            return MediaVisibility.NO_MEDIA;
+        } else {
+            binding.flMediaHolder.setVisibility(View.VISIBLE);
+        }
+        if (viewModel.shouldUseVideo()) {
+            binding.pvVideo.setVisibility(View.VISIBLE);
+            binding.ivThumbnail.setVisibility(View.INVISIBLE);
+            return MediaVisibility.VIDEO;
+        }
+        if (viewModel.shouldUseImage()){
+            binding.ivThumbnail.setVisibility(View.VISIBLE);
+            binding.pvVideo.setVisibility(View.INVISIBLE);
+            return MediaVisibility.THUMBNAIL;
+        }
+        throw new IllegalStateException();
+    }
+
+    private boolean initPlayer() {
+        if (player == null) {
+            player = new SimpleExoPlayer.Builder(requireContext()).setUseLazyPreparation(true).build();
+            binding.pvVideo.setPlayer(player);
+
+            prepareMediaForPlayer();
+            return true; //Player initialized.
+        }
+        return false; //Player already initialized.
+    }
+
+    private void prepareMediaForPlayer() {
+        player.prepare(createMediaSource());
+        player.setPlayWhenReady(true);
+    }
+
+    @NotNull
+    private MediaSource createMediaSource() {
+        String userAgent = Util.getUserAgent(requireContext(), "ubake");
+        OkHttpDataSourceFactory dataSourceFactory = new OkHttpDataSourceFactory(
+                request -> client.newCall(request), userAgent);
+        return new ProgressiveMediaSource.Factory(dataSourceFactory)
+                .createMediaSource(viewModel.getCurrentStep().getVideoUri());
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        releasePlayer();
+    }
+
+    private void releasePlayer() {
+        if (player != null) {
+            player.stop();
+            player.release();
+            player = null;
+        }
+    }
+
+    private void evaluateShouldNavButtonsBeEnabled() {
         Integer index = viewModel.getInstructionIndex().getValue();
         if (index == null){
             Log.w(getClass().getSimpleName(), "ViewModel Index is somehow null.");

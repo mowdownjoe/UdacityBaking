@@ -38,6 +38,8 @@ dependencies {
     final def media2_version = '1.0.3'
     final def exoplayer_version = '2.11.5'
     final def autovalue_version = '1.7.3'
+    final def espresso_version = '3.2.0'
+    final def junit_version = '4.13'
 
     implementation fileTree(dir: "libs", include: ["*.jar"])
 
@@ -60,10 +62,8 @@ dependencies {
     implementation "androidx.media2:media2-session:$media2_version"
     implementation "androidx.media2:media2-player:$media2_version"
     implementation "androidx.media2:media2-exoplayer:$media2_version"
-    implementation "com.google.android.exoplayer:exoplayer-core:$exoplayer_version"
-    implementation "com.google.android.exoplayer:exoplayer-dash:$exoplayer_version"
-    implementation "com.google.android.exoplayer:exoplayer-ui:$exoplayer_version"
-    implementation "com.google.android.exoplayer:exoplayer-smoothstreaming:$exoplayer_version"
+    implementation "com.google.android.exoplayer:exoplayer:$exoplayer_version"
+    implementation "com.google.android.exoplayer:extension-okhttp:$exoplayer_version"
 
     implementation "androidx.lifecycle:lifecycle-livedata:$lifecycle_version"
     implementation "androidx.lifecycle:lifecycle-viewmodel:$lifecycle_version"
@@ -74,10 +74,13 @@ dependencies {
 
     testImplementation "com.google.truth:truth:$truth_version"
     testImplementation "com.google.truth.extensions:truth-java8-extension:$truth_version"
-    testImplementation 'junit:junit:4.13'
+    testImplementation "junit:junit:$junit_version"
     testImplementation 'org.robolectric:robolectric:4.3.1'
+    androidTestImplementation "junit:junit:$junit_version"
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+    androidTestImplementation "androidx.test.espresso:espresso-core:$espresso_version"
+    androidTestImplementation "androidx.test.espresso:espresso-contrib:$espresso_version"
+    androidTestImplementation 'androidx.arch.core:core-testing:2.1.0'
     testImplementation "androidx.test:core:$androidXTestVersion"
     testImplementation "androidx.test.ext:truth:$androidXTestVersion"
     testImplementation "com.squareup.okhttp3:mockwebserver:$okhttp_version"

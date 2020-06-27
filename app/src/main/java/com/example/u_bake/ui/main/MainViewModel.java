@@ -126,8 +126,12 @@ public class MainViewModel extends AndroidViewModel {
                         }
                         String rawFromCache = String.join("\n", lines);
                         Recipe[] recipesFromCache = JsonUtils.parseRecipeListJSON(rawFromCache);
-                        recipeList.postValue(Arrays.asList(recipesFromCache));
-                        status.postValue(LoadingStatus.DONE);
+                        if (recipesFromCache != null) {
+                            recipeList.postValue(Arrays.asList(recipesFromCache));
+                            status.postValue(LoadingStatus.DONE);
+                        } else {
+                            status.postValue(LoadingStatus.ERROR);
+                        }
                     } catch (IOException e) {
                         Log.e(TAG, "No cache found.", e);
                         status.postValue(LoadingStatus.ERROR);
@@ -135,7 +139,6 @@ public class MainViewModel extends AndroidViewModel {
                 } else {
                     status.postValue(LoadingStatus.ERROR);
                 }
-
             }
         }
     }

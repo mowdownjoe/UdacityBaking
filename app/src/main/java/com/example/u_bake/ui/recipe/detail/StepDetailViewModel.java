@@ -35,6 +35,23 @@ public class StepDetailViewModel extends ViewModel {
         instructionIndex.setValue(instructionIndex.getValue() -1);
     }
 
+    @NonNull
+    public Instruction getCurrentStep(){
+        Integer index = instructionIndex.getValue();
+        if (index != null){
+            return instructions.get(index);
+        }
+        throw new IllegalArgumentException("Somehow asked for a null Instruction.");
+    }
+
+    public boolean shouldUseVideo(){
+        return !getCurrentStep().videoURL().isEmpty();
+    }
+
+    public boolean shouldUseImage(){
+        return !getCurrentStep().thumbnailURL().isEmpty();
+    }
+
     static class StepDetailViewModelFactory extends ViewModelProvider.NewInstanceFactory{
         private final int index;
         private final List<Instruction> instructions;
