@@ -31,15 +31,17 @@ android {
 }
 
 dependencies {
-    final def androidXTestVersion = '1.2.0'
+    final def androidXTestTruthExtVersion = '1.2.0'
     final def lifecycle_version = '2.2.0'
     final def truth_version = '1.0.1'
-    final def okhttp_version = '4.7.2'
+    final def okhttp_version = '3.14.8'
     final def media2_version = '1.0.3'
     final def exoplayer_version = '2.11.5'
     final def autovalue_version = '1.7.3'
     final def espresso_version = '3.2.0'
     final def junit_version = '4.13'
+    final def fragment_version = '1.2.5'
+    final def androidXTestJUnitExtVersion = '1.1.1'
 
     implementation fileTree(dir: "libs", include: ["*.jar"])
 
@@ -48,6 +50,7 @@ dependencies {
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
     implementation 'com.google.android.material:material:1.1.0'
+    implementation "androidx.fragment:fragment:$fragment_version"
 
     annotationProcessor "com.google.auto.value:auto-value:$autovalue_version"
     implementation "com.google.auto.value:auto-value-annotations:$autovalue_version"
@@ -76,13 +79,19 @@ dependencies {
     testImplementation "com.google.truth.extensions:truth-java8-extension:$truth_version"
     testImplementation "junit:junit:$junit_version"
     testImplementation 'org.robolectric:robolectric:4.3.1'
+    testImplementation "androidx.test:core:$androidXTestTruthExtVersion"
+    testImplementation "androidx.test.ext:truth:$androidXTestTruthExtVersion"
+    testImplementation "androidx.test.ext:junit:$androidXTestJUnitExtVersion"
+    testImplementation "com.squareup.okhttp3:mockwebserver:$okhttp_version"
+    testImplementation 'androidx.arch.core:core-testing:2.1.0'
+
     androidTestImplementation "junit:junit:$junit_version"
-    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
+    androidTestImplementation "androidx.test.ext:junit:$androidXTestJUnitExtVersion"
     androidTestImplementation "androidx.test.espresso:espresso-core:$espresso_version"
     androidTestImplementation "androidx.test.espresso:espresso-contrib:$espresso_version"
     androidTestImplementation 'androidx.arch.core:core-testing:2.1.0'
-    testImplementation "androidx.test:core:$androidXTestVersion"
-    testImplementation "androidx.test.ext:truth:$androidXTestVersion"
-    testImplementation "com.squareup.okhttp3:mockwebserver:$okhttp_version"
 
+    //Fragment testing library is currently bugged and will not work properly in testing source set
+    debugImplementation "androidx.fragment:fragment-testing:$fragment_version"
+    implementation "androidx.test:core:$androidXTestTruthExtVersion"
 }

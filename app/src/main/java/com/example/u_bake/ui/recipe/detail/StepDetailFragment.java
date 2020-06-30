@@ -1,5 +1,6 @@
 package com.example.u_bake.ui.recipe.detail;
 
+import android.app.ActionBar;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -79,7 +80,6 @@ public class StepDetailFragment extends Fragment {
                             Arrays.asList((Instruction[]) Objects
                                     .requireNonNull(arguments.getParcelableArray(ARG_STEP_LIST)))
                     )).get(StepDetailViewModel.class);
-            viewModel.getInstructionIndex().observe(getViewLifecycleOwner(), integer -> populateUi());
         } else {
             //If Fragment is loaded without arguments, close out activity
             requireActivity().finish();
@@ -120,28 +120,35 @@ public class StepDetailFragment extends Fragment {
         if (binding.navButtonBar != null) {
             evaluateShouldNavButtonsBeEnabled();
         }
-        populateUi();
+        viewModel.getInstructionIndex().observe(getViewLifecycleOwner(), integer -> populateUi());
     }
 
     private void populateUi(){
         Instruction instruction = viewModel.getCurrentStep();
         binding.tvStepDetail.setText(instruction.description());
 
-        MediaVisibility visibility = evaluateWhatMediaToShow();
-        if (visibility == MediaVisibility.THUMBNAIL){
-            //TODO Add placeholder and error arguments to Picasso chain
-            releasePlayer();
-            Picasso.get()
-                    .load(instruction.getThumbnailUri())
-                    .into(binding.ivThumbnail);
-        } else if (visibility == MediaVisibility.VIDEO){
-            if (!initPlayer()){
-                prepareMediaForPlayer();
-            }
+        switch (evaluateWhatMediaToShow()){
+            case NO_MEDIA:
+                releasePlayer();
+                break;
+            case VIDEO:
+                if (!initPlayer()){
+                    prepareMediaForPlayer();
+                }
+                break;
+            case THUMBNAIL:
+                releasePlayer();
+                Picasso.get()
+                        .load(instruction.getThumbnailUri())
+                        .into(binding.ivThumbnail);
+                break;
         }
 
         if (binding.navButtonBar != null){//If not using TwoPane UI
-            requireActivity().getActionBar().setTitle(instruction.shortDescription());
+            ActionBar actionBar = requireActivity().getActionBar();
+            if (actionBar != null) {
+                actionBar.setTitle(instruction.shortDescription());
+            }
         }
     }
 
@@ -211,7 +218,7 @@ public class StepDetailFragment extends Fragment {
             return;
         }
         if (binding.navButtonBar == null){
-            throw new RuntimeException("Tried to access buttons when button bar does not exist.");
+            throw new IllegalStateException("Tried to access buttons when button bar does not exist.");
         }
         if (index <= 0){
             binding.navButtonBar.btnPrevStep.setEnabled(false);

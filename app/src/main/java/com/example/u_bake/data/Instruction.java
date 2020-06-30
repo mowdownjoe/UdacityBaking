@@ -6,7 +6,9 @@ import android.os.Parcelable;
 import androidx.annotation.Nullable;
 
 import com.google.auto.value.AutoValue;
+import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.JsonClass;
+import com.squareup.moshi.Moshi;
 
 @AutoValue
 public abstract class Instruction implements Parcelable {
@@ -29,5 +31,10 @@ public abstract class Instruction implements Parcelable {
             return Uri.parse(videoURL());
         }
         return null;
+    }
+
+    public static AutoValue_Instruction create(int id, String shortDesc,
+                                               String desc, String videoURL, String thumbnailURL){
+        return new AutoValue_Instruction(id, shortDesc, desc, videoURL, thumbnailURL);
     }
 }

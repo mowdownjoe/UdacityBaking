@@ -2,9 +2,11 @@ package com.example.u_bake;
 
 import androidx.annotation.Nullable;
 
+import java.io.IOException;
+
 import okhttp3.Response;
 
-public class OkHttpException extends RuntimeException {
+public class OkHttpException extends IOException {
     private Response response;
 
     @Nullable
