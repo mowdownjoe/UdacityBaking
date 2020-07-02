@@ -25,8 +25,8 @@ import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.*;
 
 /*
-Tests in this class depend on UI elements only available when the UI is not in TwoPane mode.
-As such, they should only be run on a phone or phone-sized AVD.
+ * Tests in this class depend on UI elements only available when the UI is not in TwoPane mode.
+ * As such, they should only be run on a phone or phone-sized AVD.
  */
 
 @MediumTest

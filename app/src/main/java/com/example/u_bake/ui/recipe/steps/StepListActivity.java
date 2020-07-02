@@ -3,18 +3,14 @@ package com.example.u_bake.ui.recipe.steps;
 import android.content.Intent;
 import android.os.Bundle;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.u_bake.data.Ingredient;
 import com.example.u_bake.data.Instruction;
 import com.example.u_bake.data.Recipe;
 import com.example.u_bake.databinding.ActivityStepListBinding;
 import com.example.u_bake.ui.recipe.detail.StepDetailActivity;
-
-import java.util.Arrays;
 
 /**
  * An activity representing a list of Steps. This activity
@@ -41,7 +37,6 @@ public class StepListActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         setSupportActionBar(binding.toolbar);
-        binding.toolbar.setTitle(getTitle());
 
         if (binding.localStepList.stepDetailContainer != null) {
             // The detail container view will be present only in the
@@ -51,18 +46,17 @@ public class StepListActivity extends AppCompatActivity {
             mTwoPane = true;
         }
 
-        setupRecyclerView(binding.localStepList.stepList);
-    }
-
-    private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
         Recipe recipe = getRecipeFromIntent();
         if (recipe == null){
+            finish();
             return;
         }
 
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setAdapter(new StepListAdapter(this, recipe, mTwoPane));
+        binding.localStepList.stepList.setHasFixedSize(true);
+        binding.localStepList.stepList.setLayoutManager(new LinearLayoutManager(this));
+        binding.localStepList.stepList.setAdapter(new StepListAdapter(this, recipe, mTwoPane));
+
+        binding.toolbar.setTitle(recipe.getName());
     }
 
     private Recipe getRecipeFromIntent(){

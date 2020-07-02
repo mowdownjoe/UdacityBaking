@@ -45,15 +45,7 @@
                 android:resource="@xml/single_recipe_cache_widget_info" />
         </receiver>
 
-        <receiver android:name=".widget.RecipeCacheWidget">
-            <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
-            </intent-filter>
 
-            <meta-data
-                android:name="android.appwidget.provider"
-                android:resource="@xml/recipe_cache_widget_info" />
-        </receiver>
     </application>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
