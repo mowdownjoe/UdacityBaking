@@ -6,7 +6,6 @@ import com.google.auto.value.AutoValue;
 import com.squareup.moshi.JsonClass;
 
 @AutoValue
-//@JsonClass(generateAdapter = true, generator = "avm")
 public abstract class Ingredient implements Parcelable {
     public abstract String ingredient();
     public abstract float quantity();

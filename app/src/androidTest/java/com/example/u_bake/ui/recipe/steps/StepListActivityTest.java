@@ -4,6 +4,7 @@ import android.content.Intent;
 
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.core.app.ApplicationProvider;
+import androidx.test.espresso.contrib.RecyclerViewActions;
 
 import com.example.u_bake.R;
 import com.example.u_bake.data.Ingredient;
@@ -16,6 +17,7 @@ import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.*;
 import static androidx.test.espresso.assertion.ViewAssertions.*;
 import static androidx.test.espresso.matcher.ViewMatchers.*;
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.*;
 
@@ -26,7 +28,7 @@ public class StepListActivityTest {
         //GIVEN
         Ingredient[] ingredients = new Ingredient[]{
                 Ingredient.create("Peanut butter", 1, "TSP"),
-                Ingredient.create("Cheese", 1, "UNIT")
+                Ingredient.create("Slice of Cheese", 1, "UNIT")
         };
         Instruction[] instructions = new Instruction[]{
                 Instruction.create(1, "Test post", "", "", ""),
@@ -50,6 +52,18 @@ public class StepListActivityTest {
 
         //THEN
         onView(withId(R.id.local_step_list)).check(matches(isDisplayed()));
+        onView(withId(R.id.step_list)).check(matches(isDisplayed()));
+        scenario.onActivity(activity -> assertEquals(3, activity.adapter.getItemCount()));
+        onView(withId(R.id.step_list)).perform(RecyclerViewActions.scrollToPosition(0));
+        onView(withChild(withText(containsString("Ingredients:"))))
+                .check(matches(not(isClickable())));
+        onView(withChild(withText(containsString("Ingredients:"))))
+                .check(matches(withChild(withText(containsString("1.0 Slice of Cheese")))));
+        onView(withChild(withText(containsString("Ingredients:"))))
+                .check(matches(withChild(withText(containsString("1.0 TSP Peanut butter")))));
+        onView(withChild(withText("Test post"))).check(matches(isDisplayed()));
+        onView(withChild(withText("Test post"))).check(matches(isClickable()));
+
         scenario.close();
 
     }

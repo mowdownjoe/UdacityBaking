@@ -2,6 +2,7 @@ package com.example.u_bake.ui.recipe.steps;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -11,6 +12,8 @@ import com.example.u_bake.data.Instruction;
 import com.example.u_bake.data.Recipe;
 import com.example.u_bake.databinding.ActivityStepListBinding;
 import com.example.u_bake.ui.recipe.detail.StepDetailActivity;
+
+import java.util.ArrayList;
 
 /**
  * An activity representing a list of Steps. This activity
@@ -29,6 +32,7 @@ public class StepListActivity extends AppCompatActivity {
     private boolean mTwoPane;
     ActivityStepListBinding binding;
     StepListViewModel viewModel;
+    StepListAdapter adapter; //For testing purposes
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,9 +56,11 @@ public class StepListActivity extends AppCompatActivity {
             return;
         }
 
+        adapter = new StepListAdapter(this, recipe, mTwoPane);
+
         binding.localStepList.stepList.setHasFixedSize(true);
         binding.localStepList.stepList.setLayoutManager(new LinearLayoutManager(this));
-        binding.localStepList.stepList.setAdapter(new StepListAdapter(this, recipe, mTwoPane));
+        binding.localStepList.stepList.setAdapter(adapter);
 
         binding.toolbar.setTitle(recipe.getName());
     }
@@ -66,9 +72,25 @@ public class StepListActivity extends AppCompatActivity {
             return null;
         }
         String name = intent.getStringExtra(Recipe.RECIPE_NAME);
-        Ingredient[] ingredients = (Ingredient[]) intent
-                .getParcelableArrayExtra(Recipe.RECIPE_INGREDIENTS);
-        Instruction[] instructions = (Instruction[]) intent.getParcelableArrayExtra(Recipe.RECIPE_STEPS);
+
+        Parcelable[] ingredientsFromIntent = intent.getParcelableArrayExtra(Recipe.RECIPE_INGREDIENTS);
+        if (ingredientsFromIntent == null){
+            return null;
+        }
+        Ingredient[] ingredients = new Ingredient[ingredientsFromIntent.length];
+        for (int i = 0; i < ingredients.length; i++) {
+            ingredients[i] = (Ingredient) ingredientsFromIntent[i];
+        }
+
+        Parcelable[] instructionsFromIntent = intent.getParcelableArrayExtra(Recipe.RECIPE_STEPS);
+        if (instructionsFromIntent == null){
+            return null;
+        }
+        Instruction[] instructions = new Instruction[instructionsFromIntent.length];
+        for (int i = 0; i < ingredients.length; i++) {
+            instructions[i] = (Instruction) instructionsFromIntent[i];
+        }
+
         int servings = intent.getIntExtra(Recipe.RECIPE_SERVINGS, 0);
         String image = intent.getStringExtra(Recipe.RECIPE_IMAGE_URL);
         return new Recipe(id, name, ingredients, instructions, servings, image);

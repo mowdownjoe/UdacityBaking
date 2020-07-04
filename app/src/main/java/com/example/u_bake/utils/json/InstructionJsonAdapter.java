@@ -1,5 +1,6 @@
-package com.example.u_bake.data;
+package com.example.u_bake.utils.json;
 
+import com.example.u_bake.data.Instruction;
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.JsonReader;
 import com.squareup.moshi.JsonWriter;
@@ -72,7 +73,7 @@ public final class InstructionJsonAdapter extends JsonAdapter<Instruction> {
       }
     }
     reader.endObject();
-    return new AutoValue_Instruction(id, shortDescription, description, videoURL, thumbnailURL);
+    return Instruction.create(id, shortDescription, description, videoURL, thumbnailURL);
   }
 
   @Override

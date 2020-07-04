@@ -1,7 +1,7 @@
 package com.example.u_bake.utils;
 
 import com.example.u_bake.data.Recipe;
-import com.google.common.truth.Truth;
+import com.example.u_bake.utils.json.JsonUtils;
 
 import org.junit.Test;
 

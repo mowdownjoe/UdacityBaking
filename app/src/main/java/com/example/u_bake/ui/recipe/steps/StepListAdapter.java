@@ -71,7 +71,7 @@ public class StepListAdapter
 
     @Override
     public int getItemViewType(int position) {
-        if (position == 0){
+        if (position == 0 && mIngredients != null){
             return TYPE_INGREDIENT_HEADER;
         } else {
             return TYPE_STEP;
@@ -105,7 +105,14 @@ public class StepListAdapter
 
     @Override
     public int getItemCount() {
-        return mInstructions.size();
+        int count = 0;
+        if (mIngredients != null){
+            ++count;
+        }
+        if (mInstructions != null) {
+            count += mInstructions.size();
+        }
+        return count;
     }
 
     class StepViewHolder extends RecyclerView.ViewHolder {
@@ -117,7 +124,7 @@ public class StepListAdapter
         }
 
         void bind(int position){
-            binding.idText.setText(mInstructions.get(position).id());
+            binding.idText.setText(""+mInstructions.get(position).id());
             binding.content.setText(mInstructions.get(position).shortDescription());
 
             itemView.setTag(position);
@@ -135,7 +142,8 @@ public class StepListAdapter
         }
 
         void bind(){
-            StringBuilder builder = new StringBuilder();
+            StringBuilder builder = new StringBuilder().append(mParentActivity
+                    .getString(R.string.ingredient_list_card_start));
             for (Ingredient i: mIngredients) {
                 builder.append(i.quantity()).append(' ');
                 if (!i.measure().toLowerCase().equals("unit")){

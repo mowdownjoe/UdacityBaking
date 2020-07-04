@@ -11,7 +11,6 @@ import com.squareup.moshi.JsonClass;
 import com.squareup.moshi.Moshi;
 
 @AutoValue
-//@JsonClass(generateAdapter = true, generator = "avm")
 public abstract class Instruction implements Parcelable {
     public abstract int id();
     public abstract String shortDescription();

@@ -1,5 +1,6 @@
-package com.example.u_bake.data;
+package com.example.u_bake.utils.json;
 
+import com.example.u_bake.data.Ingredient;
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.JsonReader;
 import com.squareup.moshi.JsonWriter;
@@ -57,7 +58,7 @@ public final class IngredientJsonAdapter extends JsonAdapter<Ingredient> {
             }
         }
         reader.endObject();
-        return new AutoValue_Ingredient(ingredient, quantity, measure);
+        return Ingredient.create(ingredient, quantity, measure);
     }
 
     @Override

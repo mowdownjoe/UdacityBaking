@@ -1,11 +1,9 @@
-package com.example.u_bake.utils;
+package com.example.u_bake.utils.json;
 
 import androidx.annotation.Nullable;
 
 import com.example.u_bake.data.Ingredient;
-import com.example.u_bake.data.IngredientJsonAdapter;
 import com.example.u_bake.data.Instruction;
-import com.example.u_bake.data.InstructionJsonAdapter;
 import com.example.u_bake.data.Recipe;
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
