@@ -28,7 +28,8 @@ public class StepListActivityTest {
         //GIVEN
         Ingredient[] ingredients = new Ingredient[]{
                 Ingredient.create("Peanut butter", 1, "TSP"),
-                Ingredient.create("Slice of Cheese", 1, "UNIT")
+                Ingredient.create("Slice of Cheese", 1, "UNIT"),
+                Ingredient.create("Milk", .5f, "CUP")
         };
         Instruction[] instructions = new Instruction[]{
                 Instruction.create(1, "Test post", "", "", ""),
@@ -58,9 +59,11 @@ public class StepListActivityTest {
         onView(withChild(withText(containsString("Ingredients:"))))
                 .check(matches(not(isClickable())));
         onView(withChild(withText(containsString("Ingredients:"))))
-                .check(matches(withChild(withText(containsString("1.0 Slice of Cheese")))));
+                .check(matches(withChild(withText(containsString("1 Slice of Cheese")))));
         onView(withChild(withText(containsString("Ingredients:"))))
-                .check(matches(withChild(withText(containsString("1.0 TSP Peanut butter")))));
+                .check(matches(withChild(withText(containsString(".5 CUP Milk")))));
+        onView(withChild(withText(containsString("Ingredients:"))))
+                .check(matches(withChild(withText(containsString("1 TSP Peanut butter")))));
         onView(withChild(withText("Test post"))).check(matches(isDisplayed()));
         onView(withChild(withText("Test post"))).check(matches(isClickable()));
 

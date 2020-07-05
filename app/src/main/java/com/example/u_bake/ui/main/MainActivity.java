@@ -6,14 +6,13 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
-import android.util.DisplayMetrics;
 import android.view.View;
 
 import com.example.u_bake.data.Recipe;
 import com.example.u_bake.databinding.ActivityMainBinding;
 import com.example.u_bake.ui.recipe.steps.StepListActivity;
+import com.example.u_bake.utils.LayoutUtils;
 
 public class MainActivity extends AppCompatActivity implements RecipeAdapter.RecipeOnClickListener {
 
@@ -31,7 +30,7 @@ public class MainActivity extends AppCompatActivity implements RecipeAdapter.Rec
 
         binding.rvRecipeList.setHasFixedSize(true);
 
-        if (getScreenWidth() >= 900){
+        if (LayoutUtils.pxToDp(this, LayoutUtils.getScreenWidthPx(getWindowManager())) >= 900){
             GridLayoutManager layoutManager = new GridLayoutManager(this, 3);
             binding.rvRecipeList.setLayoutManager(layoutManager);
         } else {
@@ -69,12 +68,6 @@ public class MainActivity extends AppCompatActivity implements RecipeAdapter.Rec
         });
 
         viewModel.initializeRecipes();
-    }
-
-    private int getScreenWidth(){
-        DisplayMetrics metrics = new DisplayMetrics();
-        getWindowManager().getDefaultDisplay().getMetrics(metrics);
-        return metrics.widthPixels; //Convert to DIPs
     }
 
     @Override

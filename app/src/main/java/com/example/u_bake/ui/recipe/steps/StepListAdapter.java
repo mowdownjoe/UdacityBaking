@@ -1,5 +1,6 @@
 package com.example.u_bake.ui.recipe.steps;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -97,7 +98,11 @@ public class StepListAdapter
     public void onBindViewHolder(@NotNull final RecyclerView.ViewHolder holder, int position) {
         int type = getItemViewType(position);
         if (type == TYPE_STEP){
-            ((StepViewHolder) holder).bind(position -1);
+            if (mIngredients != null) {
+                ((StepViewHolder) holder).bind(position -1);
+            } else {
+                ((StepViewHolder) holder).bind(position);
+            }
         } else if (type == TYPE_INGREDIENT_HEADER){
             ((IngredientCardViewHolder) holder).bind();
         }
@@ -123,8 +128,9 @@ public class StepListAdapter
             binding = StepListContentBinding.bind(view);
         }
 
+        @SuppressLint("SetTextI18n")
         void bind(int position){
-            binding.idText.setText(""+mInstructions.get(position).id());
+            binding.idText.setText(Integer.toString(mInstructions.get(position).id()));
             binding.content.setText(mInstructions.get(position).shortDescription());
 
             itemView.setTag(position);
@@ -145,7 +151,12 @@ public class StepListAdapter
             StringBuilder builder = new StringBuilder().append(mParentActivity
                     .getString(R.string.ingredient_list_card_start));
             for (Ingredient i: mIngredients) {
-                builder.append(i.quantity()).append(' ');
+                float v = i.quantity();
+                if (v % 1 == 0) {
+                    builder.append(Math.round(v)).append(' ');
+                } else {
+                    builder.append(v).append(' ');
+                }
                 if (!i.measure().toLowerCase().equals("unit")){
                     builder.append(i.measure()).append(' ');
                 }

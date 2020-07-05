@@ -31,7 +31,6 @@ public class StepListActivity extends AppCompatActivity {
      */
     private boolean mTwoPane;
     ActivityStepListBinding binding;
-    StepListViewModel viewModel;
     StepListAdapter adapter; //For testing purposes
 
     @Override
@@ -87,7 +86,7 @@ public class StepListActivity extends AppCompatActivity {
             return null;
         }
         Instruction[] instructions = new Instruction[instructionsFromIntent.length];
-        for (int i = 0; i < ingredients.length; i++) {
+        for (int i = 0; i < instructions.length; i++) {
             instructions[i] = (Instruction) instructionsFromIntent[i];
         }
 

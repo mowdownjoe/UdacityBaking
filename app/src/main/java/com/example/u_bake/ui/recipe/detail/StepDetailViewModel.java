@@ -13,10 +13,18 @@ import java.util.List;
 public class StepDetailViewModel extends ViewModel {
     private List<Instruction> instructions;
     private MutableLiveData<Integer> instructionIndex;
+    private MutableLiveData<Boolean> fullscreenPlayerFlag;
+    private MutableLiveData<StepDetailFragment.MediaVisibility> mediaState;
 
     public StepDetailViewModel(List<Instruction> instructions, int instructionIndex) {
         this.instructions = instructions;
         this.instructionIndex = new MutableLiveData<>(instructionIndex);
+        fullscreenPlayerFlag = new MutableLiveData<>(false);
+        mediaState = new MutableLiveData<>(StepDetailFragment.MediaVisibility.NO_MEDIA);
+    }
+
+    LiveData<StepDetailFragment.MediaVisibility> getMediaState() {
+        return mediaState;
     }
 
     public LiveData<Integer> getInstructionIndex(){
@@ -27,12 +35,22 @@ public class StepDetailViewModel extends ViewModel {
         return instructions;
     }
 
+    public LiveData<Boolean> getFullscreenPlayerFlag() { return fullscreenPlayerFlag; }
+
     public void incrementIndex(){
         instructionIndex.setValue(instructionIndex.getValue() +1);
     }
 
     public void decrementIndex(){
         instructionIndex.setValue(instructionIndex.getValue() -1);
+    }
+
+    public void setIsPlayerFullscreen(boolean fullscreen){
+        fullscreenPlayerFlag.setValue(fullscreen);
+    }
+
+    void setMediaState(StepDetailFragment.MediaVisibility newMediaState) {
+        mediaState.setValue(newMediaState);
     }
 
     @NonNull

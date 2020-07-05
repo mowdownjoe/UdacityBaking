@@ -1,14 +1,18 @@
 package com.example.u_bake.ui.recipe.detail;
 
 import android.app.ActionBar;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -16,6 +20,7 @@ import com.example.u_bake.AppExecutors;
 import com.example.u_bake.data.Instruction;
 import com.example.u_bake.databinding.StepDetailBinding;
 import com.example.u_bake.ui.recipe.steps.StepListActivity;
+import com.example.u_bake.utils.LayoutUtils;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.ext.okhttp.OkHttpDataSourceFactory;
 import com.google.android.exoplayer2.source.MediaSource;
@@ -45,7 +50,7 @@ public class StepDetailFragment extends Fragment {
     SimpleExoPlayer player;
     OkHttpClient client;
 
-    private enum MediaVisibility{
+    enum MediaVisibility{
         NO_MEDIA, VIDEO, THUMBNAIL
     }
 
@@ -87,7 +92,6 @@ public class StepDetailFragment extends Fragment {
     }
 
     private void setUpOkHttpClient() {
-        //TODO Configure client through builder.
         Dispatcher dispatcher = new Dispatcher((ExecutorService) AppExecutors.getInstance().networkIO());
 
         client = new OkHttpClient.Builder()
@@ -120,29 +124,107 @@ public class StepDetailFragment extends Fragment {
         if (binding.navButtonBar != null) {
             evaluateShouldNavButtonsBeEnabled();
         }
-        viewModel.getInstructionIndex().observe(getViewLifecycleOwner(), integer -> populateUi());
+
+        //Set up Viewmodel observers for state machine
+        viewModel.getInstructionIndex().observe(getViewLifecycleOwner(), i -> populateUi());
+
+        viewModel.getFullscreenPlayerFlag().observe(getViewLifecycleOwner(), shouldBeFullscreen -> {
+            Log.v("FullscreenObserver", "Fullscreen status: "+shouldBeFullscreen);
+            ConstraintLayout.LayoutParams params =
+                    (ConstraintLayout.LayoutParams) binding.flMediaHolder.getLayoutParams();
+            ActionBar toolbar = requireActivity().getActionBar();
+            if (shouldBeFullscreen){
+                binding.tvStepDetail.setVisibility(View.GONE);
+                binding.navButtonBar.btnNextStep.setVisibility(View.GONE);
+                binding.navButtonBar.btnPrevStep.setVisibility(View.GONE);
+
+                params.height = ConstraintLayout.LayoutParams.MATCH_PARENT;
+                params.setMargins(0,0,0,0);
+                binding.flMediaHolder.setLayoutParams(params);
+
+                if (toolbar != null){
+                    toolbar.hide();
+                }
+
+                //TODO Set Immersive Mode
+            } else {
+                binding.tvStepDetail.setVisibility(View.VISIBLE);
+                binding.navButtonBar.btnNextStep.setVisibility(View.VISIBLE);
+                binding.navButtonBar.btnPrevStep.setVisibility(View.VISIBLE);
+
+                params.height = ConstraintLayout.LayoutParams.MATCH_CONSTRAINT;
+                int squareMargin = LayoutUtils.pxToDp(requireContext(), 8);
+                params.setMargins(squareMargin, squareMargin, squareMargin, squareMargin);
+                binding.flMediaHolder.setLayoutParams(params);
+
+                if (toolbar != null){
+                    toolbar.show();
+                }
+
+                //TODO Exit Immersive Mode
+            }
+        });
+
+        viewModel.getMediaState().observe(getViewLifecycleOwner(), mediaVisibility -> {
+            Log.v("MediaTypeObserver", "Media type: "+mediaVisibility);
+            if (mediaVisibility == MediaVisibility.NO_MEDIA){
+                binding.flMediaHolder.setVisibility(View.GONE);
+            } else {
+                binding.flMediaHolder.setVisibility(View.VISIBLE);
+            }
+
+            switch (mediaVisibility){
+                case NO_MEDIA:
+                    releasePlayer();
+                    viewModel.setIsPlayerFullscreen(false);
+                    break;
+                case VIDEO:
+                    binding.pvVideo.setVisibility(View.VISIBLE);
+                    binding.ivThumbnail.setVisibility(View.INVISIBLE);
+
+                    if (!initPlayer()){
+                        prepareMediaForPlayer();
+                    }
+                    evaluateIfVideoShouldBeFullscreen();
+                    break;
+                case THUMBNAIL:
+                    binding.ivThumbnail.setVisibility(View.VISIBLE);
+                    binding.pvVideo.setVisibility(View.INVISIBLE);
+
+                    releasePlayer();
+                    viewModel.setIsPlayerFullscreen(false);
+                    //TODO Setup Placeholder and Error arguments for image loading
+                    Picasso.get()
+                            .load(viewModel.getCurrentStep().getThumbnailUri())
+                            .into(binding.ivThumbnail);
+                    break;
+            }
+        });
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        releasePlayer();
+    }
+
+    @Override
+    public void onConfigurationChanged(@NonNull Configuration newConfig) {
+        if (viewModel.getMediaState().getValue() == MediaVisibility.VIDEO
+                && binding.navButtonBar != null //if not using TwoPane UI
+                && newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE){
+            viewModel.setIsPlayerFullscreen(true);
+        } else {
+            viewModel.setIsPlayerFullscreen(false);
+        }
+        super.onConfigurationChanged(newConfig);
     }
 
     private void populateUi(){
         Instruction instruction = viewModel.getCurrentStep();
         binding.tvStepDetail.setText(instruction.description());
 
-        switch (evaluateWhatMediaToShow()){
-            case NO_MEDIA:
-                releasePlayer();
-                break;
-            case VIDEO:
-                if (!initPlayer()){
-                    prepareMediaForPlayer();
-                }
-                break;
-            case THUMBNAIL:
-                releasePlayer();
-                Picasso.get()
-                        .load(instruction.getThumbnailUri())
-                        .into(binding.ivThumbnail);
-                break;
-        }
+        viewModel.setMediaState(evaluateWhatMediaToShow());
 
         if (binding.navButtonBar != null){//If not using TwoPane UI
             ActionBar actionBar = requireActivity().getActionBar();
@@ -152,21 +234,24 @@ public class StepDetailFragment extends Fragment {
         }
     }
 
+    private void evaluateIfVideoShouldBeFullscreen() {
+        //Function sets flag in ViewModel and should trigger observer
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE
+                && binding.navButtonBar != null){ //If Landscape AND TwoPane is not enabled
+            viewModel.setIsPlayerFullscreen(true);
+        } else {
+            viewModel.setIsPlayerFullscreen(false);
+        }
+    }
+
     private MediaVisibility evaluateWhatMediaToShow() {
         if (!viewModel.shouldUseImage() && !viewModel.shouldUseVideo()){
-            binding.flMediaHolder.setVisibility(View.GONE);
             return MediaVisibility.NO_MEDIA;
-        } else {
-            binding.flMediaHolder.setVisibility(View.VISIBLE);
         }
         if (viewModel.shouldUseVideo()) {
-            binding.pvVideo.setVisibility(View.VISIBLE);
-            binding.ivThumbnail.setVisibility(View.INVISIBLE);
             return MediaVisibility.VIDEO;
         }
         if (viewModel.shouldUseImage()){
-            binding.ivThumbnail.setVisibility(View.VISIBLE);
-            binding.pvVideo.setVisibility(View.INVISIBLE);
             return MediaVisibility.THUMBNAIL;
         }
         throw new IllegalStateException();
@@ -174,7 +259,9 @@ public class StepDetailFragment extends Fragment {
 
     private boolean initPlayer() {
         if (player == null) {
-            player = new SimpleExoPlayer.Builder(requireContext()).setUseLazyPreparation(true).build();
+            player = new SimpleExoPlayer.Builder(requireContext())
+                    .setUseLazyPreparation(true)
+                    .build();
             binding.pvVideo.setPlayer(player);
 
             prepareMediaForPlayer();
@@ -195,12 +282,6 @@ public class StepDetailFragment extends Fragment {
                 request -> client.newCall(request), userAgent);
         return new ProgressiveMediaSource.Factory(dataSourceFactory)
                 .createMediaSource(viewModel.getCurrentStep().getVideoUri());
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        releasePlayer();
     }
 
     private void releasePlayer() {
