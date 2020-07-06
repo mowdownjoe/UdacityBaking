@@ -25,7 +25,7 @@ import java.util.concurrent.TimeUnit;
 
 public class MainViewModel extends AndroidViewModel {
 
-    private static String jsonCache = "recipes.json";
+    protected static String jsonCache = "recipes.json";
 
     private MutableLiveData<LoadingStatus> status;
     private MutableLiveData<List<Recipe>> recipeList;
@@ -45,6 +45,10 @@ public class MainViewModel extends AndroidViewModel {
     public void initializeRecipes(){
         fetchRecipesTask = new FetchRecipesTask();
         fetchRecipesTask.execute(!isCacheFresh());
+    }
+
+    protected void setStatus(LoadingStatus newStatus){
+        status.postValue(newStatus);
     }
 
     //Checks if Cache is older than a day.
@@ -69,6 +73,27 @@ public class MainViewModel extends AndroidViewModel {
         super.onCleared();
     }
 
+    protected void postFromCache(File cachedJson) {
+        try {
+            List<String> lines = Files.readAllLines(cachedJson.toPath());
+            if (lines.isEmpty()){
+                setStatus(LoadingStatus.ERROR);
+                return;
+            }
+            String rawFromCache = String.join("\n", lines);
+            Recipe[] recipesFromCache = JsonUtils.parseRecipeListJSON(rawFromCache);
+            if (recipesFromCache != null) {
+                recipeList.postValue(Arrays.asList(recipesFromCache));
+                setStatus(LoadingStatus.DONE);
+            } else {
+                setStatus(LoadingStatus.ERROR);
+            }
+        } catch (IOException e) {
+            Log.e("Viewmodel.FromCache", "No cache found.", e);
+            setStatus(LoadingStatus.ERROR);
+        }
+    }
+
     @SuppressLint("StaticFieldLeak")
     private class FetchRecipesTask extends AsyncTask<Boolean, Void, Recipe[]> {
 
@@ -77,7 +102,7 @@ public class MainViewModel extends AndroidViewModel {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            status.postValue(LoadingStatus.LOADING);
+            setStatus(LoadingStatus.LOADING);
         }
 
         @SuppressWarnings("ResultOfMethodCallIgnored")
@@ -112,33 +137,18 @@ public class MainViewModel extends AndroidViewModel {
 
             if (recipes != null){
                 recipeList.postValue(Arrays.asList(recipes));
-                status.postValue(LoadingStatus.DONE);
+                setStatus(LoadingStatus.DONE);
             } else {
                 //Try to grab from cache in case of error.
                 File cachedJson = new File(getApplication().getCacheDir(), jsonCache);
                 if (cachedJson.exists()){
-                    try {
-                        List<String> lines = Files.readAllLines(cachedJson.toPath());
-                        if (lines.isEmpty()){
-                            status.postValue(LoadingStatus.ERROR);
-                            return;
-                        }
-                        String rawFromCache = String.join("\n", lines);
-                        Recipe[] recipesFromCache = JsonUtils.parseRecipeListJSON(rawFromCache);
-                        if (recipesFromCache != null) {
-                            recipeList.postValue(Arrays.asList(recipesFromCache));
-                            status.postValue(LoadingStatus.DONE);
-                        } else {
-                            status.postValue(LoadingStatus.ERROR);
-                        }
-                    } catch (IOException e) {
-                        Log.e(TAG, "No cache found.", e);
-                        status.postValue(LoadingStatus.ERROR);
-                    }
+                    postFromCache(cachedJson);
                 } else {
-                    status.postValue(LoadingStatus.ERROR);
+                    setStatus(LoadingStatus.ERROR);
                 }
             }
         }
+
+
     }
 }

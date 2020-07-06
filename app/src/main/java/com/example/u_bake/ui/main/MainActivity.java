@@ -13,6 +13,7 @@ import com.example.u_bake.data.Recipe;
 import com.example.u_bake.databinding.ActivityMainBinding;
 import com.example.u_bake.ui.recipe.steps.StepListActivity;
 import com.example.u_bake.utils.LayoutUtils;
+import com.example.u_bake.utils.MiscUtils;
 
 public class MainActivity extends AppCompatActivity implements RecipeAdapter.RecipeOnClickListener {
 
@@ -72,13 +73,6 @@ public class MainActivity extends AppCompatActivity implements RecipeAdapter.Rec
 
     @Override
     public void onListItemClick(Recipe recipe) {
-        Intent intent = new Intent(this, StepListActivity.class)
-                .putExtra(Recipe.RECIPE_ID, recipe.getId())
-                .putExtra(Recipe.RECIPE_NAME, recipe.getName())
-                .putExtra(Recipe.RECIPE_IMAGE_URL, recipe.getImage())
-                .putExtra(Recipe.RECIPE_INGREDIENTS, recipe.getIngredients())
-                .putExtra(Recipe.RECIPE_STEPS, recipe.getSteps())
-                .putExtra(Recipe.RECIPE_SERVINGS, recipe.getServings());
-        startActivity(intent);
+        startActivity(MiscUtils.buildRecipeIntent(recipe, this));
     }
 }

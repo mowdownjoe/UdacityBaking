@@ -9,4 +9,8 @@
     <string name="add_widget">Add widget</string>
     <string name="configure">Configure</string>
     <string name="ingredient_list_card_start">Ingredients:\n</string>
+    <string name="widget_error">No widget ID given</string>
+    <string name="widget_error_toast">Could not link widget to recipe</string>
+    <string name="widget_data_gone_error_toast">Data linking widget cleared. Please recreate widget.</string>
+    <string name="generic_widget_error_toast">Error with widget linking file. Please remove and re-add widget.</string>
 </resources>

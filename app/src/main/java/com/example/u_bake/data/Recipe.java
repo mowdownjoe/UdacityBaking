@@ -1,6 +1,8 @@
 package com.example.u_bake.data;
 
-public class Recipe {
+import java.io.Serializable;
+
+public class Recipe implements Serializable {
     public static String RECIPE_ID = "id";
     public static String RECIPE_NAME = "name";
     public static String RECIPE_INGREDIENTS = "ingredients";

@@ -19,6 +19,7 @@ import com.example.u_bake.databinding.CardRecipeItemBinding;
 import com.example.u_bake.databinding.StepListContentBinding;
 import com.example.u_bake.ui.recipe.detail.StepDetailActivity;
 import com.example.u_bake.ui.recipe.detail.StepDetailFragment;
+import com.example.u_bake.utils.LayoutUtils;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -148,21 +149,8 @@ public class StepListAdapter
         }
 
         void bind(){
-            StringBuilder builder = new StringBuilder().append(mParentActivity
-                    .getString(R.string.ingredient_list_card_start));
-            for (Ingredient i: mIngredients) {
-                float v = i.quantity();
-                if (v % 1 == 0) {
-                    builder.append(Math.round(v)).append(' ');
-                } else {
-                    builder.append(v).append(' ');
-                }
-                if (!i.measure().toLowerCase().equals("unit")){
-                    builder.append(i.measure()).append(' ');
-                }
-                builder.append(i.ingredient()).append('\n');
-            }
-            binding.tvRecipeName.setText(builder.toString());
+            binding.tvRecipeName.setText(LayoutUtils
+                    .buildRecipeIngredientsCard(mIngredients, mParentActivity));
         }
     }
 }

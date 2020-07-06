@@ -10,8 +10,10 @@ import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.JsonClass;
 import com.squareup.moshi.Moshi;
 
+import java.io.Serializable;
+
 @AutoValue
-public abstract class Instruction implements Parcelable {
+public abstract class Instruction implements Parcelable, Serializable {
     public abstract int id();
     public abstract String shortDescription();
     public abstract String description();

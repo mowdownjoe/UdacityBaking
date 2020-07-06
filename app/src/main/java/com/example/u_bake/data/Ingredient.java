@@ -5,8 +5,10 @@ import android.os.Parcelable;
 import com.google.auto.value.AutoValue;
 import com.squareup.moshi.JsonClass;
 
+import java.io.Serializable;
+
 @AutoValue
-public abstract class Ingredient implements Parcelable {
+public abstract class Ingredient implements Parcelable, Serializable {
     public abstract String ingredient();
     public abstract float quantity();
     public abstract String measure();
