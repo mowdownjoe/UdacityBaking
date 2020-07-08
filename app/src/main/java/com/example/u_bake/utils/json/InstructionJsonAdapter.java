@@ -94,6 +94,6 @@ public final class InstructionJsonAdapter extends JsonAdapter<Instruction> {
 
   @Override
   public String toString() {
-    return new StringBuilder().append("JsonAdapter(").append("Instruction").append(")").toString();
+    return "JsonAdapter(" + "Instruction" + ")";
   }
 }

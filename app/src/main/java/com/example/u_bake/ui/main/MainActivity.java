@@ -5,15 +5,12 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
 import com.example.u_bake.data.Recipe;
 import com.example.u_bake.databinding.ActivityMainBinding;
-import com.example.u_bake.ui.recipe.steps.StepListActivity;
 import com.example.u_bake.utils.LayoutUtils;
-import com.example.u_bake.utils.MiscUtils;
 
 public class MainActivity extends AppCompatActivity implements RecipeAdapter.RecipeOnClickListener {
 
@@ -73,6 +70,6 @@ public class MainActivity extends AppCompatActivity implements RecipeAdapter.Rec
 
     @Override
     public void onListItemClick(Recipe recipe) {
-        startActivity(MiscUtils.buildRecipeIntent(recipe, this));
+        startActivity(Recipe.buildRecipeIntent(recipe, this));
     }
 }

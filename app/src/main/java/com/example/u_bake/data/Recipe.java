@@ -1,5 +1,10 @@
 package com.example.u_bake.data;
 
+import android.content.Context;
+import android.content.Intent;
+
+import com.example.u_bake.ui.recipe.steps.StepListActivity;
+
 import java.io.Serializable;
 
 public class Recipe implements Serializable {
@@ -73,5 +78,15 @@ public class Recipe implements Serializable {
 
     public void setImage(String image) {
         this.image = image;
+    }
+
+    public static Intent buildRecipeIntent(Recipe recipe, Context c){
+        return new Intent(c, StepListActivity.class)
+                .putExtra(RECIPE_ID, recipe.getId())
+                .putExtra(RECIPE_NAME, recipe.getName())
+                .putExtra(RECIPE_IMAGE_URL, recipe.getImage())
+                .putExtra(RECIPE_INGREDIENTS, recipe.getIngredients())
+                .putExtra(RECIPE_STEPS, recipe.getSteps())
+                .putExtra(RECIPE_SERVINGS, recipe.getServings());
     }
 }

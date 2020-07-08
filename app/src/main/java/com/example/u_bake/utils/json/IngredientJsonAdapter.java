@@ -75,6 +75,6 @@ public final class IngredientJsonAdapter extends JsonAdapter<Ingredient> {
 
     @Override
     public String toString() {
-        return new StringBuilder().append("JsonAdapter(").append("Ingredient").append(")").toString();
+        return "JsonAdapter(" + "Ingredient" + ")";
     }
 }

@@ -144,8 +144,8 @@ public class SingleRecipeCacheWidgetConfigureActivity extends AppCompatActivity
         final Context context = SingleRecipeCacheWidgetConfigureActivity.this;
 
         // When the button is clicked, store the string locally
-        String widgetText = LayoutUtils
-                .buildRecipeIngredientsCard(Arrays.asList(recipe.getIngredients()), context);
+        String widgetText = "Ingredients for ".concat(recipe.getName()).concat("\n")
+                .concat(LayoutUtils.buildRecipeIngredientsCard(Arrays.asList(recipe.getIngredients())));
         saveIngredientsPref(context, mAppWidgetId, widgetText);
 
         //Store the recipe to launch in local storage.

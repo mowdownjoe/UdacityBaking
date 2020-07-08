@@ -6,14 +6,11 @@ import android.appwidget.AppWidgetProvider;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
-import android.view.View;
 import android.widget.RemoteViews;
-import android.widget.Toast;
 
 import com.example.u_bake.AppExecutors;
 import com.example.u_bake.R;
 import com.example.u_bake.data.Recipe;
-import com.example.u_bake.utils.MiscUtils;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -50,7 +47,7 @@ public class SingleRecipeCacheWidget extends AppWidgetProvider {
                 inputStream.close();
                 fileStream.close();
 
-                Intent intent = MiscUtils.buildRecipeIntent(recipe, context).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                Intent intent = Recipe.buildRecipeIntent(recipe, context).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 PendingIntent pendingIntent = PendingIntent.getActivity(context, REQUEST_CODE, intent, 0);
                 views.setOnClickPendingIntent(R.id.widget_root, pendingIntent);
             } catch (IOException e) {
@@ -86,7 +83,8 @@ public class SingleRecipeCacheWidget extends AppWidgetProvider {
             File file = new File(context.getFilesDir(),
                     SingleRecipeCacheWidgetConfigureActivity.FILE_PREFIX+appWidgetId);
             if (file.exists()){
-                file.delete();
+                //noinspection Convert2MethodRef
+                AppExecutors.getInstance().diskIO().execute(() -> file.delete());
             }
         }
     }

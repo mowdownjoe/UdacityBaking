@@ -25,7 +25,7 @@ import java.util.concurrent.TimeUnit;
 
 public class MainViewModel extends AndroidViewModel {
 
-    protected static String jsonCache = "recipes.json";
+    protected static final String jsonCache = "recipes.json";
 
     private MutableLiveData<LoadingStatus> status;
     private MutableLiveData<List<Recipe>> recipeList;

@@ -24,10 +24,8 @@ public class LayoutUtils {
         return metrics.widthPixels;
     }
 
-    public static String buildRecipeIngredientsCard(@NonNull final List<Ingredient> recipeIngredients,
-                                                    @NonNull final Context c){
-        StringBuilder builder = new StringBuilder().append(c
-                .getString(R.string.ingredient_list_card_start));
+    public static String buildRecipeIngredientsCard(@NonNull final List<Ingredient> recipeIngredients){
+        StringBuilder builder = new StringBuilder();
         for (Ingredient i: recipeIngredients) {
             float v = i.quantity();
             if (v % 1 == 0) {

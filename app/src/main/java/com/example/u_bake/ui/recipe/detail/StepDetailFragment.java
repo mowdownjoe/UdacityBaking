@@ -2,11 +2,14 @@ package com.example.u_bake.ui.recipe.detail;
 
 import android.app.ActionBar;
 import android.content.res.Configuration;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowInsets;
+import android.view.WindowInsetsController;
 import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
@@ -146,7 +149,17 @@ public class StepDetailFragment extends Fragment {
                     toolbar.hide();
                 }
 
-                //TODO Set Immersive Mode
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                    WindowInsetsController controller = view.getWindowInsetsController();
+                    if (controller != null) {
+                        controller.hide(WindowInsets.Type.statusBars());
+                        controller.hide(WindowInsets.Type.navigationBars());
+                    }
+                } else {
+                    view.setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN |
+                            View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
+                }
             } else {
                 binding.tvStepDetail.setVisibility(View.VISIBLE);
                 binding.navButtonBar.btnNextStep.setVisibility(View.VISIBLE);
@@ -161,7 +174,16 @@ public class StepDetailFragment extends Fragment {
                     toolbar.show();
                 }
 
-                //TODO Exit Immersive Mode
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                    WindowInsetsController controller = view.getWindowInsetsController();
+                    if (controller != null) {
+                        controller.show(WindowInsets.Type.statusBars());
+                        controller.show(WindowInsets.Type.navigationBars());
+                    }
+                } else {
+                    view.setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
+                }
             }
         });
 

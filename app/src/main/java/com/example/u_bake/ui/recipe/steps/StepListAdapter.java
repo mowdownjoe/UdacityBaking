@@ -149,8 +149,9 @@ public class StepListAdapter
         }
 
         void bind(){
-            binding.tvRecipeName.setText(LayoutUtils
-                    .buildRecipeIngredientsCard(mIngredients, mParentActivity));
+            String cardText = mParentActivity.getString(R.string.ingredient_list_card_start)
+                    .concat(LayoutUtils.buildRecipeIngredientsCard(mIngredients));
+            binding.tvRecipeName.setText(cardText);
         }
     }
 }
