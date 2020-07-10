@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
 
+import androidx.annotation.VisibleForTesting;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
@@ -29,9 +30,11 @@ public class StepListActivity extends AppCompatActivity {
      * Whether or not the activity is in two-pane mode, i.e. running on a tablet
      * device.
      */
-    private boolean mTwoPane;
+    @VisibleForTesting
+    protected boolean mTwoPane;
     ActivityStepListBinding binding;
-    StepListAdapter adapter; //For testing purposes
+    @VisibleForTesting
+    protected StepListAdapter adapter; //For testing purposes
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,19 +79,13 @@ public class StepListActivity extends AppCompatActivity {
         if (ingredientsFromIntent == null){
             return null;
         }
-        Ingredient[] ingredients = new Ingredient[ingredientsFromIntent.length];
-        for (int i = 0; i < ingredients.length; i++) {
-            ingredients[i] = (Ingredient) ingredientsFromIntent[i];
-        }
+        Ingredient[] ingredients = Ingredient.convertIntentArray(ingredientsFromIntent);
 
         Parcelable[] instructionsFromIntent = intent.getParcelableArrayExtra(Recipe.RECIPE_STEPS);
         if (instructionsFromIntent == null){
             return null;
         }
-        Instruction[] instructions = new Instruction[instructionsFromIntent.length];
-        for (int i = 0; i < instructions.length; i++) {
-            instructions[i] = (Instruction) instructionsFromIntent[i];
-        }
+        Instruction[] instructions = Instruction.convertIntentArray(instructionsFromIntent);
 
         int servings = intent.getIntExtra(Recipe.RECIPE_SERVINGS, 0);
         String image = intent.getStringExtra(Recipe.RECIPE_IMAGE_URL);

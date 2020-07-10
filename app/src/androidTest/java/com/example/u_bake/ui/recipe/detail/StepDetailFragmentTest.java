@@ -24,14 +24,11 @@ import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.*;
 
-/*
- * Tests in this class depend on UI elements only available when the UI is not in TwoPane mode.
- * As such, they should only be run on a phone or phone-sized AVD.
- */
+
 
 @MediumTest
 @RunWith(AndroidJUnit4.class)
-public class StepDetailFragmentPhoneTest {
+public class StepDetailFragmentTest {
 
     @Test
     public void recipeStepDetails_DisplayedInUi(){
@@ -48,17 +45,27 @@ public class StepDetailFragmentPhoneTest {
         Bundle bundle = new Bundle();
         bundle.putParcelableArray(StepDetailFragment.ARG_STEP_LIST, new Instruction[]{instruction});
         bundle.putInt(StepDetailFragment.ARG_ITEM_ID, 0);
-        FragmentScenario.launchInContainer(StepDetailFragment.class, bundle, R.style.AppTheme, new FragmentFactory());
+        FragmentScenario<StepDetailFragment> scenario =
+                FragmentScenario.launchInContainer(StepDetailFragment.class, bundle, R.style.AppTheme, new FragmentFactory());
 
         //THEN
         onView(withId(R.id.tv_step_detail)).check(matches(isDisplayed()));
         onView(withId(R.id.tv_step_detail))
                 .check(matches(withText("Lorem ipsum dolor sit amet, consectetur adipiscing elit")));
         onView(withId(R.id.fl_media_holder)).check(matches(not(isDisplayed())));
-        onView(withId(R.id.btn_next_step)).check(matches(not(isEnabled())));
-        onView(withId(R.id.btn_prev_step)).check(matches(not(isEnabled())));
+        scenario.onFragment(fragment -> {
+            if (fragment.binding.navButtonBar != null){
+                onView(withId(R.id.btn_next_step)).check(matches(not(isEnabled())));
+                onView(withId(R.id.btn_prev_step)).check(matches(not(isEnabled())));
+            }
+        });
+
     }
 
+    /*
+    * This test is dependant on UI elements only available when the UI is not in TwoPane mode.
+    *  It can be run on tablets, but is largely redundant if done so. There is no reason to do so.
+    */
     @Test
     public void recipeStepDetails_ClickNavButton_UiChanged(){
         //GIVEN
@@ -77,21 +84,26 @@ public class StepDetailFragmentPhoneTest {
         bundle.putParcelableArray(StepDetailFragment.ARG_STEP_LIST,
                 new Instruction[]{instruction, instruction1});
         bundle.putInt(StepDetailFragment.ARG_ITEM_ID, 0);
-        FragmentScenario.launchInContainer(StepDetailFragment.class, bundle, R.style.AppTheme, new FragmentFactory());
+        FragmentScenario<StepDetailFragment> scenario =
+                FragmentScenario.launchInContainer(StepDetailFragment.class, bundle, R.style.AppTheme, new FragmentFactory());
 
         //THEN
         onView(withId(R.id.tv_step_detail)).check(matches(isDisplayed()));
         onView(withId(R.id.tv_step_detail))
                 .check(matches(withText("Lorem ipsum dolor sit amet, consectetur adipiscing elit")));
-        onView(withId(R.id.fl_media_holder)).check(matches(not(isDisplayed())));;
-        onView(withId(R.id.btn_next_step)).check(matches(isEnabled()));
-        onView(withId(R.id.btn_prev_step)).check(matches(not(isEnabled())));
+        onView(withId(R.id.fl_media_holder)).check(matches(not(isDisplayed())));
+        scenario.onFragment(fragment -> {
+            if (fragment.binding.navButtonBar != null){
+                onView(withId(R.id.btn_next_step)).check(matches(isEnabled()));
+                onView(withId(R.id.btn_prev_step)).check(matches(not(isEnabled())));
 
-        onView(withId(R.id.btn_next_step)).perform(click());
-        onView(withId(R.id.tv_step_detail)).check(matches(isDisplayed()));
-        onView(withId(R.id.tv_step_detail)).check(matches(withText("pls ignore")));
-        onView(withId(R.id.fl_media_holder)).check(matches(not(isDisplayed())));;
-        onView(withId(R.id.btn_next_step)).check(matches(not(isEnabled())));
-        onView(withId(R.id.btn_prev_step)).check(matches(isEnabled()));
+                onView(withId(R.id.btn_next_step)).perform(click());
+                onView(withId(R.id.tv_step_detail)).check(matches(isDisplayed()));
+                onView(withId(R.id.tv_step_detail)).check(matches(withText("pls ignore")));
+                onView(withId(R.id.fl_media_holder)).check(matches(not(isDisplayed())));;
+                onView(withId(R.id.btn_next_step)).check(matches(not(isEnabled())));
+                onView(withId(R.id.btn_prev_step)).check(matches(isEnabled()));
+            }
+        });
     }
 }

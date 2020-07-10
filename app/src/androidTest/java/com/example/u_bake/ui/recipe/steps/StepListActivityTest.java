@@ -70,4 +70,44 @@ public class StepListActivityTest {
         scenario.close();
 
     }
+
+    @Test
+    public void stepListActivity_ClickOnListItem_NavigateToDetail(){
+        //GIVEN
+        Ingredient[] ingredients = new Ingredient[]{
+                Ingredient.create("Peanut butter", 1, "TSP"),
+                Ingredient.create("Slice of Cheese", 1, "UNIT"),
+                Ingredient.create("Milk", .5f, "CUP")
+        };
+        Instruction[] instructions = new Instruction[]{
+                Instruction.create(1, "Test post", "Lorem ipsum dolor sit amet, consectetur adipiscing elit.", "", ""),
+                Instruction.create(2, "pls ignore",
+                        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.", "", "")
+        };
+        int id = 42;
+        String name = "Peanut Cheese Bar";
+        int servings = 1;
+
+
+        //WHEN
+        Intent intent = new Intent(ApplicationProvider.getApplicationContext(), StepListActivity.class)
+                .putExtra(Recipe.RECIPE_ID, id)
+                .putExtra(Recipe.RECIPE_NAME, name)
+                .putExtra(Recipe.RECIPE_INGREDIENTS, ingredients)
+                .putExtra(Recipe.RECIPE_STEPS, instructions)
+                .putExtra(Recipe.RECIPE_SERVINGS, servings)
+                .putExtra(Recipe.RECIPE_IMAGE_URL, "");
+
+        ActivityScenario<StepListActivity> scenario = ActivityScenario.launch(intent);
+
+        //THEN
+        scenario.onActivity(activity -> assertEquals(3, activity.adapter.getItemCount()));
+
+        onView(withChild(withText("Test post"))).perform(click());
+
+        onView(withId(R.id.tv_step_detail)).check(matches(isDisplayed()));
+        onView(withId(R.id.tv_step_detail))
+                .check(matches(withText(containsString("Lorem ipsum dolor sit amet, consectetur adipiscing elit"))));
+        onView(withId(R.id.fl_media_holder)).check(matches(not(isDisplayed())));
+    }
 }

@@ -13,7 +13,7 @@ import okhttp3.Response;
 
 public class NetworkUtils {
 
-    private static final String JSON_URL = "http://go.udacity.com/android-baking-app-json";
+    private static final String JSON_URL = "https://go.udacity.com/android-baking-app-json";
 
     @Nullable
     public static String getRawRecipeJSON() throws IOException {

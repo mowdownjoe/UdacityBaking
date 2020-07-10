@@ -71,9 +71,10 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
             binding.tvRecipeName.setText(recipe.getName());
             String imageUrl = recipe.getImage();
             if (!imageUrl.isEmpty()){
-                //TODO Setup Placeholder and Error arguments for image loading
                 Picasso.get()
                         .load(imageUrl)
+                        .placeholder(R.drawable.loading_plate)
+                        .error(R.drawable.ic_baseline_broken_image_24)
                         .into(binding.ivRecipeImage);
             } else {
                 binding.ivRecipeImage.setVisibility(View.GONE);

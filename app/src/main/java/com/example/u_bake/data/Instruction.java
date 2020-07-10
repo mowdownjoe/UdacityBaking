@@ -39,4 +39,12 @@ public abstract class Instruction implements Parcelable, Serializable {
         return new AutoValue_Instruction(id, shortDescription, description, videoURL, thumbnailURL);
     }
 
+    public static Instruction[] convertIntentArray(Parcelable[] array){
+        AutoValue_Instruction[] instructions = new AutoValue_Instruction[array.length];
+        for (int i = 0; i < instructions.length; i++){
+            instructions[i] = (AutoValue_Instruction) array[i];
+        }
+        return instructions;
+    }
+
 }

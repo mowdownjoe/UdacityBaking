@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 
 import com.example.u_bake.data.Recipe;
@@ -28,7 +29,7 @@ public class MainActivity extends AppCompatActivity implements RecipeAdapter.Rec
 
         binding.rvRecipeList.setHasFixedSize(true);
 
-        if (LayoutUtils.pxToDp(this, LayoutUtils.getScreenWidthPx(getWindowManager())) >= 900){
+        if (binding.viewTabletTag != null){
             GridLayoutManager layoutManager = new GridLayoutManager(this, 3);
             binding.rvRecipeList.setLayoutManager(layoutManager);
         } else {

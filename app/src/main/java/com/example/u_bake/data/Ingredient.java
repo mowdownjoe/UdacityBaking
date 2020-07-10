@@ -13,7 +13,15 @@ public abstract class Ingredient implements Parcelable, Serializable {
     public abstract float quantity();
     public abstract String measure();
 
-    public static AutoValue_Ingredient create(String name, float quantity, String measure){
+    public static Ingredient create(String name, float quantity, String measure){
         return new AutoValue_Ingredient(name, quantity, measure);
+    }
+
+    public static Ingredient[] convertIntentArray(Parcelable[] array){
+        AutoValue_Ingredient[] ingredients = new AutoValue_Ingredient[array.length];
+        for (int i=0; i < ingredients.length; i++){
+            ingredients[i] = (AutoValue_Ingredient) array[i];
+        }
+        return ingredients;
     }
 }

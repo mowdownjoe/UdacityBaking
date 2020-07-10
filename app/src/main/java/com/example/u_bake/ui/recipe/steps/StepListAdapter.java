@@ -16,6 +16,7 @@ import com.example.u_bake.data.Ingredient;
 import com.example.u_bake.data.Instruction;
 import com.example.u_bake.data.Recipe;
 import com.example.u_bake.databinding.CardRecipeItemBinding;
+import com.example.u_bake.databinding.IngredientCardContentBinding;
 import com.example.u_bake.databinding.StepListContentBinding;
 import com.example.u_bake.ui.recipe.detail.StepDetailActivity;
 import com.example.u_bake.ui.recipe.detail.StepDetailFragment;
@@ -89,7 +90,7 @@ public class StepListAdapter
             return new StepViewHolder(view);
         } else if (viewType == TYPE_INGREDIENT_HEADER){
             View view = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.card_recipe_item, parent, false);
+                    .inflate(R.layout.ingredient_card_content, parent, false);
             return new IngredientCardViewHolder(view);
         }
         throw new IllegalArgumentException("Somehow received illegal ViewType");
@@ -141,17 +142,17 @@ public class StepListAdapter
 
     class IngredientCardViewHolder extends RecyclerView.ViewHolder {
 
-        final CardRecipeItemBinding binding;
+        final IngredientCardContentBinding binding;
 
         public IngredientCardViewHolder(@NonNull View itemView) {
             super(itemView);
-            binding = CardRecipeItemBinding.bind(itemView);
+            binding = IngredientCardContentBinding.bind(itemView);
         }
 
         void bind(){
             String cardText = mParentActivity.getString(R.string.ingredient_list_card_start)
                     .concat(LayoutUtils.buildRecipeIngredientsCard(mIngredients));
-            binding.tvRecipeName.setText(cardText);
+            binding.tvIngredientText.setText(cardText);
         }
     }
 }
