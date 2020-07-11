@@ -15,5 +15,6 @@
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         app:layoutManager="LinearLayoutManager"
-        tools:listitem="@layout/step_list_content" />
+        tools:listitem="@layout/step_list_content"
+        android:background="@drawable/step_selector"/>
 </FrameLayout>

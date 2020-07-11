@@ -25,7 +25,8 @@
         android:layout_marginRight="16dp"
         app:layoutManager="LinearLayoutManager"
         tools:context="com.example.u_bake.ui.recipe.steps.StepListActivity"
-        tools:listitem="@layout/step_list_content" />
+        tools:listitem="@layout/step_list_content"
+        android:background="@drawable/step_selector"/>
 
     <FrameLayout
         android:id="@+id/step_detail_container"

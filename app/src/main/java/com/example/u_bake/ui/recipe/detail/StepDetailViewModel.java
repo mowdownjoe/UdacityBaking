@@ -1,5 +1,7 @@
 package com.example.u_bake.ui.recipe.detail;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -11,6 +13,7 @@ import com.example.u_bake.data.Instruction;
 import java.util.List;
 
 public class StepDetailViewModel extends ViewModel {
+    private long playerRestorePoint = 0;
     private List<Instruction> instructions;
     private MutableLiveData<Integer> instructionIndex;
     private MutableLiveData<Boolean> fullscreenPlayerFlag;
@@ -21,6 +24,15 @@ public class StepDetailViewModel extends ViewModel {
         this.instructionIndex = new MutableLiveData<>(instructionIndex);
         fullscreenPlayerFlag = new MutableLiveData<>(false);
         mediaState = new MutableLiveData<>(StepDetailFragment.MediaVisibility.NO_MEDIA);
+        Log.v(getClass().getSimpleName(), "Initialized");
+    }
+
+    public long getPlayerRestorePoint() {
+        return playerRestorePoint;
+    }
+
+    public void setPlayerRestorePoint(long playerRestorePoint) {
+        this.playerRestorePoint = playerRestorePoint;
     }
 
     LiveData<StepDetailFragment.MediaVisibility> getMediaState() {
@@ -38,10 +50,12 @@ public class StepDetailViewModel extends ViewModel {
     public LiveData<Boolean> getFullscreenPlayerFlag() { return fullscreenPlayerFlag; }
 
     public void incrementIndex(){
+        playerRestorePoint = 0;
         instructionIndex.setValue(instructionIndex.getValue() +1);
     }
 
     public void decrementIndex(){
+        playerRestorePoint = 0;
         instructionIndex.setValue(instructionIndex.getValue() -1);
     }
 

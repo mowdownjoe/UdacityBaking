@@ -28,6 +28,7 @@ import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.ext.okhttp.OkHttpDataSourceFactory;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.ProgressiveMediaSource;
+import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.util.EventLogger;
 import com.google.android.exoplayer2.util.Util;
 import com.squareup.picasso.Picasso;
@@ -48,6 +49,7 @@ import okhttp3.OkHttpClient;
  * on handsets.
  */
 public class StepDetailFragment extends Fragment {
+    private static final String KEY_PLAYER_POSITION = "player_position";
 
     //TODO Figure out why video doesn't load on Phones
 
@@ -139,7 +141,6 @@ public class StepDetailFragment extends Fragment {
                     binding.navButtonBar.btnPrevStep.setVisibility(View.GONE);
 
                     params.height = ConstraintLayout.LayoutParams.MATCH_PARENT;
-                    params.setMargins(0,0,0,0);
                     binding.flMediaHolder.setLayoutParams(params);
 
                     if (toolbar != null){
@@ -163,8 +164,6 @@ public class StepDetailFragment extends Fragment {
                     binding.navButtonBar.btnPrevStep.setVisibility(View.VISIBLE);
 
                     params.height = ConstraintLayout.LayoutParams.MATCH_CONSTRAINT;
-                    int squareMargin = LayoutUtils.pxToDp(requireContext(), 8);
-                    params.setMargins(squareMargin, squareMargin, squareMargin, squareMargin);
                     binding.flMediaHolder.setLayoutParams(params);
 
                     if (toolbar != null){
@@ -221,6 +220,28 @@ public class StepDetailFragment extends Fragment {
                     break;
             }
         });
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if (viewModel.getMediaState().getValue() == MediaVisibility.VIDEO){
+            outState.putLong(KEY_PLAYER_POSITION, player.getContentPosition());
+        }
+    }
+
+    @Override
+    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+        if (viewModel.getMediaState().getValue() == MediaVisibility.VIDEO
+                && savedInstanceState != null){
+            long position = savedInstanceState.getLong(KEY_PLAYER_POSITION, 0);
+            if (player != null) {
+                player.seekTo(position);
+            } else {
+                viewModel.setPlayerRestorePoint(position);
+            }
+        }
     }
 
     private void setUpOkHttpClient() {
@@ -288,10 +309,15 @@ public class StepDetailFragment extends Fragment {
 
     private boolean initPlayer() {
         if (player == null) {
+            DefaultTrackSelector selector = new DefaultTrackSelector(requireContext());
+
             player = new SimpleExoPlayer.Builder(requireContext())
-                    .setUseLazyPreparation(true)
+                    .setTrackSelector(selector)
                     .build();
             binding.pvVideo.setPlayer(player);
+
+            //Uncomment for Logging
+            //player.addAnalyticsListener(new EventLogger(selector));
 
             prepareMediaForPlayer();
             return true; //Player initialized.
@@ -301,6 +327,7 @@ public class StepDetailFragment extends Fragment {
 
     private void prepareMediaForPlayer() {
         player.prepare(createMediaSource());
+        player.seekTo(viewModel.getPlayerRestorePoint());
         player.setPlayWhenReady(true);
     }
 
