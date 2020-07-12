@@ -23,13 +23,11 @@ import com.example.u_bake.R;
 import com.example.u_bake.data.Instruction;
 import com.example.u_bake.databinding.StepDetailBinding;
 import com.example.u_bake.ui.recipe.steps.StepListActivity;
-import com.example.u_bake.utils.LayoutUtils;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.ext.okhttp.OkHttpDataSourceFactory;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.ProgressiveMediaSource;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
-import com.google.android.exoplayer2.util.EventLogger;
 import com.google.android.exoplayer2.util.Util;
 import com.squareup.picasso.Picasso;
 
@@ -39,6 +37,7 @@ import java.util.Arrays;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 
+import okhttp3.Cache;
 import okhttp3.Dispatcher;
 import okhttp3.OkHttpClient;
 
@@ -249,6 +248,7 @@ public class StepDetailFragment extends Fragment {
 
         client = new OkHttpClient.Builder()
                 .dispatcher(dispatcher)
+                .cache(new Cache(requireContext().getCacheDir(), 1073741824)) //1 GB of cache
                 .build();
     }
 
