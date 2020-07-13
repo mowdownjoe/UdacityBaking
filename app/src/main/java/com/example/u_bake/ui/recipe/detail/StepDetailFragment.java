@@ -222,23 +222,51 @@ public class StepDetailFragment extends Fragment {
     }
 
     @Override
-    public void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-        if (viewModel.getMediaState().getValue() == MediaVisibility.VIDEO){
-            outState.putLong(KEY_PLAYER_POSITION, player.getContentPosition());
+    public void onPause() {
+        super.onPause();
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.M
+                && viewModel.getMediaState().getValue() == MediaVisibility.VIDEO){
+            viewModel.setPlayerRestorePoint(player.getContentPosition());
+            releasePlayer();
         }
     }
 
     @Override
-    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
-        super.onViewStateRestored(savedInstanceState);
-        if (viewModel.getMediaState().getValue() == MediaVisibility.VIDEO
-                && savedInstanceState != null){
-            long position = savedInstanceState.getLong(KEY_PLAYER_POSITION, 0);
-            if (player != null) {
-                player.seekTo(position);
-            } else {
-                viewModel.setPlayerRestorePoint(position);
+    public void onStop() {
+        super.onStop();
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M
+                && viewModel.getMediaState().getValue() == MediaVisibility.VIDEO){
+            viewModel.setPlayerRestorePoint(player.getContentPosition());
+            releasePlayer();
+        }
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M
+                && viewModel.getMediaState().getValue() == MediaVisibility.VIDEO){
+            if (!initPlayer()){
+                if (player.isLoading() || player.isPlaying()){
+                    player.seekTo(viewModel.getPlayerRestorePoint());
+                } else {
+                    prepareMediaForPlayer();
+                }
+            }
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.M
+                && viewModel.getMediaState().getValue() == MediaVisibility.VIDEO){
+            if (!initPlayer()){
+                if (player.isLoading() || player.isPlaying()){
+                    player.seekTo(viewModel.getPlayerRestorePoint());
+                } else {
+                    prepareMediaForPlayer();
+                }
             }
         }
     }
